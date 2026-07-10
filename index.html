@@ -1,0 +1,2653 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>鼎新ERP — 客戶需求蒐集平台</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Microsoft JhengHei', 'PingFang TC', sans-serif;
+      background: #f0f4f8;
+      min-height: 100vh;
+      color: #2d3748;
+    }
+
+    .header {
+      background: linear-gradient(135deg, #003366 0%, #0066cc 100%);
+      color: white;
+      padding: 20px 40px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 16px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+    }
+    .header-left { display: flex; align-items: center; gap: 16px; }
+    .header-logo {
+      font-size: 28px;
+      font-weight: 900;
+      letter-spacing: 2px;
+      border-right: 2px solid rgba(255,255,255,0.4);
+      padding-right: 16px;
+    }
+    .header-title {
+      font-size: 17px;
+      font-weight: 400;
+      opacity: 0.9;
+    }
+    .nav-btn {
+      background: rgba(255,255,255,0.15);
+      color: white;
+      border: 1.5px solid rgba(255,255,255,0.4);
+      border-radius: 8px;
+      padding: 8px 18px;
+      font-size: 14px;
+      font-weight: 700;
+      font-family: inherit;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    .nav-btn:hover { background: rgba(255,255,255,0.25); }
+
+    .container {
+      max-width: 900px;
+      margin: 32px auto;
+      padding: 0 20px 60px;
+    }
+
+    .card {
+      background: white;
+      border-radius: 12px;
+      box-shadow: 0 2px 16px rgba(0,0,0,0.08);
+      overflow: hidden;
+      margin-bottom: 24px;
+    }
+    .card-header {
+      background: #003366;
+      color: white;
+      padding: 14px 24px;
+      font-size: 15px;
+      font-weight: 700;
+      letter-spacing: 1px;
+    }
+    .card-body { padding: 28px 24px; }
+
+    .field { margin-bottom: 22px; }
+    .field:last-child { margin-bottom: 0; }
+
+    label {
+      display: block;
+      font-size: 14px;
+      font-weight: 700;
+      color: #2d3748;
+      margin-bottom: 8px;
+    }
+    label .required { color: #e53e3e; margin-left: 4px; }
+    label .hint { color: #718096; font-weight: 400; font-size: 12px; margin-left: 8px; }
+
+    input[type="text"],
+    input[type="number"],
+    input[type="email"],
+    input[type="tel"],
+    input[type="date"],
+    select,
+    textarea {
+      width: 100%;
+      border: 1.5px solid #cbd5e0;
+      border-radius: 8px;
+      padding: 10px 14px;
+      font-size: 15px;
+      font-family: inherit;
+      color: #2d3748;
+      transition: border-color 0.2s;
+      background: #fafafa;
+    }
+    input:focus, select:focus, textarea:focus {
+      outline: none;
+      border-color: #0066cc;
+      background: white;
+    }
+    textarea { resize: vertical; min-height: 100px; }
+
+    .row-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+    .row-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 20px; }
+    @media (max-width: 640px) {
+      .row-2, .row-3 { grid-template-columns: 1fr; gap: 0; }
+      .container { margin: 16px auto; padding: 0 12px 40px; }
+      .header { padding: 12px 16px; gap: 10px; }
+      .header-title { font-size: 12px; letter-spacing: 0; }
+      .header-logo { font-size: 20px; padding-right: 10px; letter-spacing: 1px; }
+      .nav-btn { padding: 6px 12px; font-size: 12px; }
+      .card { margin-bottom: 16px; border-radius: 10px; }
+      .card-header { padding: 12px 16px; font-size: 14px; letter-spacing: 0.5px; }
+      .card-body { padding: 20px 14px; }
+      .field { margin-bottom: 18px; }
+      label { font-size: 13px; }
+      .checkbox-item, .radio-item { padding: 7px 12px; }
+      .checkbox-item span, .radio-item span { font-size: 13px; }
+      .btn-primary { padding: 11px 22px; font-size: 14px; }
+      .btn-secondary { padding: 9px 18px; font-size: 13px; }
+      .form-actions { padding: 16px; flex-direction: column-reverse; align-items: stretch; }
+      .form-actions > div { justify-content: space-between; }
+      .form-progress { text-align: center; }
+      .confirm-actions { padding: 14px; gap: 8px; }
+      .confirm-actions .action-group { width: 100%; justify-content: space-between; }
+      .confirm-actions .btn-mini { flex: 1 1 auto; min-width: 60px; text-align: center; }
+      .confirm-table td:first-child { width: 100px; padding: 12px 10px; font-size: 12px; }
+      .confirm-table td:last-child { padding: 12px 10px; font-size: 13px; }
+      .solution-item { padding: 12px; }
+      .solution-name { font-size: 14px; min-width: 0; }
+      .list-toolbar { flex-direction: column; align-items: stretch; }
+      .list-toolbar select { max-width: none !important; }
+
+      /* Client table → card view on mobile */
+      .client-table thead { display: none; }
+      .client-table, .client-table tbody { display: block; }
+      .client-table tr {
+        display: block;
+        border: 1px solid #e2e8f0;
+        border-radius: 10px;
+        margin-bottom: 12px;
+        padding: 8px 4px;
+        background: white;
+      }
+      .client-table tr:hover td { background: transparent; }
+      .client-table td {
+        display: block;
+        padding: 6px 12px;
+        border-bottom: 1px solid #f0f4f8;
+      }
+      .client-table td:last-child { border-bottom: none; padding-top: 10px; }
+      .client-table td[data-label]::before {
+        content: attr(data-label) "：";
+        font-weight: 700;
+        font-size: 12px;
+        color: #718096;
+        display: inline-block;
+        min-width: 74px;
+      }
+      .client-table td.client-name-cell::before { display: none; }
+      .row-actions { justify-content: flex-start; padding-left: 0; }
+    }
+
+    .checkbox-group, .radio-group {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 4px;
+    }
+    .checkbox-item, .radio-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background: #f0f4f8;
+      border: 1.5px solid #cbd5e0;
+      border-radius: 8px;
+      padding: 8px 16px;
+      cursor: pointer;
+      transition: all 0.15s;
+      user-select: none;
+    }
+    .checkbox-item:hover, .radio-item:hover { border-color: #0066cc; background: #ebf4ff; }
+    .checkbox-item input, .radio-item input { width: 16px; height: 16px; accent-color: #0066cc; cursor: pointer; }
+    .checkbox-item span, .radio-item span { font-size: 14px; font-weight: 500; }
+    .checkbox-item.checked, .radio-item.checked { border-color: #0066cc; background: #ebf4ff; color: #0066cc; font-weight: 700; }
+
+    /* Grade selector (A/B/C1/C2/D) */
+    .grade-group {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 10px;
+      margin-top: 4px;
+    }
+    @media (max-width: 640px) {
+      .grade-group { grid-template-columns: repeat(3, 1fr); }
+    }
+    .grade-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+      background: white;
+      border: 2px solid #e2e8f0;
+      border-radius: 10px;
+      padding: 14px 8px;
+      cursor: pointer;
+      transition: all 0.2s;
+      user-select: none;
+      text-align: center;
+    }
+    .grade-item:hover { border-color: #cbd5e0; }
+    .grade-item input { display: none; }
+    .grade-item .grade-label { font-size: 22px; font-weight: 900; letter-spacing: 1px; color: #4a5568; }
+    .grade-item .grade-desc { font-size: 11px; color: #718096; line-height: 1.4; }
+    .grade-item.checked {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 14px rgba(0,0,0,0.12);
+    }
+    .grade-item[data-grade="A"].checked  { border-color: #e53e3e; background: #fff5f5; }
+    .grade-item[data-grade="A"].checked .grade-label, .grade-item[data-grade="A"].checked .grade-desc { color: #c53030; }
+    .grade-item[data-grade="B"].checked  { border-color: #dd6b20; background: #fffaf0; }
+    .grade-item[data-grade="B"].checked .grade-label, .grade-item[data-grade="B"].checked .grade-desc { color: #c05621; }
+    .grade-item[data-grade="C1"].checked { border-color: #3182ce; background: #ebf8ff; }
+    .grade-item[data-grade="C1"].checked .grade-label, .grade-item[data-grade="C1"].checked .grade-desc { color: #2b6cb0; }
+    .grade-item[data-grade="C2"].checked { border-color: #319795; background: #e6fffa; }
+    .grade-item[data-grade="C2"].checked .grade-label, .grade-item[data-grade="C2"].checked .grade-desc { color: #2c7a7b; }
+    .grade-item[data-grade="D"].checked  { border-color: #718096; background: #edf2f7; }
+    .grade-item[data-grade="D"].checked .grade-label, .grade-item[data-grade="D"].checked .grade-desc { color: #4a5568; }
+
+    .grade-badge {
+      display: inline-block;
+      padding: 3px 12px;
+      border-radius: 12px;
+      font-size: 12px;
+      font-weight: 800;
+      letter-spacing: 0.5px;
+    }
+    .grade-badge.A  { background: #fff5f5; color: #c53030; border: 1px solid #feb2b2; }
+    .grade-badge.B  { background: #fffaf0; color: #c05621; border: 1px solid #fbd38d; }
+    .grade-badge.C1 { background: #ebf8ff; color: #2b6cb0; border: 1px solid #90cdf4; }
+    .grade-badge.C2 { background: #e6fffa; color: #2c7a7b; border: 1px solid #81e6d9; }
+    .grade-badge.D  { background: #edf2f7; color: #4a5568; border: 1px solid #cbd5e0; }
+
+    .other-input { display: none; margin-top: 10px; }
+    .other-input.visible { display: block; }
+    .sub-section {
+      background: #f7fafc;
+      border: 1px solid #e2e8f0;
+      border-radius: 8px;
+      padding: 16px;
+      margin-top: 6px;
+    }
+    .sub-label { font-size: 13px; font-weight: 700; color: #4a5568; margin-bottom: 8px; }
+
+    .form-actions {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 20px 24px;
+      background: #f7fafc;
+      border-top: 1px solid #e2e8f0;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+    .form-progress { font-size: 13px; color: #4a5568; }
+    .form-progress strong { color: #0066cc; font-size: 16px; }
+
+    .btn-primary {
+      background: linear-gradient(135deg, #003366, #0066cc);
+      color: white;
+      border: none;
+      border-radius: 8px;
+      padding: 12px 32px;
+      font-size: 15px;
+      font-weight: 700;
+      font-family: inherit;
+      cursor: pointer;
+      transition: opacity 0.2s, transform 0.1s;
+    }
+    .btn-primary:hover { opacity: 0.9; transform: translateY(-1px); }
+    .btn-primary:active { transform: translateY(0); }
+
+    .btn-secondary {
+      background: white;
+      color: #003366;
+      border: 2px solid #003366;
+      border-radius: 8px;
+      padding: 11px 24px;
+      font-size: 14px;
+      font-weight: 700;
+      font-family: inherit;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .btn-secondary:hover { background: #003366; color: white; }
+
+    .btn-danger {
+      background: white;
+      color: #c53030;
+      border: 2px solid #c53030;
+      border-radius: 8px;
+      padding: 6px 14px;
+      font-size: 13px;
+      font-weight: 700;
+      font-family: inherit;
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+    .btn-danger:hover { background: #c53030; color: white; }
+
+    .btn-mini {
+      background: white;
+      color: #0066cc;
+      border: 1.5px solid #0066cc;
+      border-radius: 6px;
+      padding: 7px 14px;
+      font-size: 13px;
+      font-weight: 700;
+      font-family: inherit;
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+    .btn-mini:hover { background: #0066cc; color: white; }
+
+    /* Confirm page */
+    .confirm-intro {
+      background: #ebf4ff;
+      border-left: 4px solid #0066cc;
+      border-radius: 4px;
+      padding: 14px 18px;
+      margin-bottom: 24px;
+      font-size: 14px;
+      color: #2b6cb0;
+    }
+    .confirm-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 14px;
+    }
+    .confirm-table tr { border-bottom: 1px solid #e2e8f0; }
+    .confirm-table tr:last-child { border-bottom: none; }
+    .confirm-table td { padding: 14px 16px; vertical-align: top; }
+    .confirm-table td:first-child {
+      width: 160px;
+      font-weight: 700;
+      color: #4a5568;
+      white-space: nowrap;
+      background: #f7fafc;
+    }
+    .confirm-table td:last-child { color: #2d3748; line-height: 1.6; }
+
+    .tag {
+      display: inline-block;
+      background: #ebf4ff;
+      color: #0066cc;
+      border: 1px solid #bee3f8;
+      border-radius: 20px;
+      padding: 3px 12px;
+      font-size: 13px;
+      font-weight: 600;
+      margin: 2px;
+    }
+
+    .confirm-actions {
+      display: flex;
+      gap: 10px;
+      justify-content: space-between;
+      align-items: center;
+      padding: 20px 24px;
+      background: #f7fafc;
+      border-top: 1px solid #e2e8f0;
+      flex-wrap: wrap;
+    }
+    .confirm-actions .action-group { display: flex; gap: 8px; flex-wrap: wrap; }
+
+    /* List page */
+    #search-input { flex: 1; min-width: 220px; }
+    .client-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 14px;
+    }
+    .client-table th {
+      background: #f7fafc;
+      padding: 12px;
+      text-align: left;
+      font-size: 12px;
+      color: #4a5568;
+      border-bottom: 2px solid #e2e8f0;
+      font-weight: 700;
+      letter-spacing: 0.5px;
+    }
+    .client-table td {
+      padding: 12px;
+      border-bottom: 1px solid #e2e8f0;
+      vertical-align: middle;
+    }
+    .client-table tr:hover td { background: #f7fafc; }
+    .client-name-cell { min-width: 180px; }
+    .client-name {
+      font-weight: 700;
+      color: #2d3748;
+      cursor: pointer;
+      font-size: 15px;
+    }
+    .client-name:hover { color: #0066cc; text-decoration: underline; }
+    .client-meta { font-size: 12px; color: #718096; margin-top: 3px; }
+    .row-actions { display: flex; gap: 6px; justify-content: flex-end; flex-wrap: nowrap; }
+
+    .empty-state {
+      text-align: center;
+      padding: 60px 20px;
+      color: #718096;
+    }
+    .empty-state .emoji { font-size: 48px; margin-bottom: 12px; }
+    .empty-state p { font-size: 15px; margin-bottom: 20px; }
+
+    .list-toolbar {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      align-items: center;
+      margin-bottom: 16px;
+    }
+
+    /* Draft banner */
+    .draft-banner {
+      background: #fefcbf;
+      border: 1.5px solid #f6e05e;
+      border-radius: 10px;
+      padding: 14px 18px;
+      margin-bottom: 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+    .draft-banner .draft-text { font-size: 14px; color: #744210; flex: 1; min-width: 250px; }
+    .draft-banner .draft-actions { display: flex; gap: 8px; }
+
+    /* Toast */
+    .toast {
+      position: fixed;
+      bottom: 30px;
+      left: 50%;
+      transform: translateX(-50%) translateY(80px);
+      background: #2d3748;
+      color: white;
+      padding: 12px 28px;
+      border-radius: 30px;
+      font-size: 14px;
+      font-weight: 600;
+      opacity: 0;
+      transition: all 0.3s;
+      pointer-events: none;
+      z-index: 999;
+      max-width: 90%;
+    }
+    .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+    .toast.success { background: #22543d; }
+    .toast.error { background: #c53030; }
+
+    /* Validation */
+    .field-error {
+      color: #e53e3e;
+      font-size: 12px;
+      margin-top: 6px;
+      display: none;
+    }
+    input.invalid, select.invalid, textarea.invalid { border-color: #e53e3e; }
+
+    /* Flash-fill highlight (autofill feedback) */
+    .field.flash-fill {
+      animation: flashBg 1.8s ease-out;
+      border-radius: 10px;
+      margin-left: -10px; padding-left: 10px;
+      margin-right: -10px; padding-right: 10px;
+    }
+    @keyframes flashBg {
+      0%   { background: rgba(72, 187, 120, 0.28); box-shadow: 0 0 0 3px rgba(72, 187, 120, 0.35); }
+      70%  { background: rgba(72, 187, 120, 0.10); box-shadow: 0 0 0 2px rgba(72, 187, 120, 0.15); }
+      100% { background: transparent; box-shadow: none; }
+    }
+
+    /* Solutions card */
+    .solution-intro {
+      font-size: 13px;
+      color: #718096;
+      line-height: 1.7;
+      margin-bottom: 16px;
+      padding: 10px 14px;
+      background: #f7fafc;
+      border-left: 3px solid #cbd5e0;
+      border-radius: 4px;
+    }
+    .solution-list { display: flex; flex-direction: column; gap: 12px; }
+    .solution-item {
+      border: 1.5px solid #e2e8f0;
+      border-radius: 10px;
+      padding: 14px 16px;
+      background: white;
+      transition: border-color 0.15s, box-shadow 0.15s;
+    }
+    .solution-item:hover { border-color: #0066cc; box-shadow: 0 2px 8px rgba(0, 102, 204, 0.08); }
+    .solution-item.tier-main { border-left: 4px solid #0066cc; }
+    .solution-item.tier-sub  { border-left: 4px solid #cbd5e0; }
+    .solution-head {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 8px;
+      flex-wrap: wrap;
+    }
+    .solution-name {
+      font-size: 15px;
+      font-weight: 800;
+      color: #003366;
+      flex: 1;
+      min-width: 180px;
+    }
+    .solution-tier-badge {
+      font-size: 11px;
+      font-weight: 700;
+      padding: 3px 10px;
+      border-radius: 12px;
+      letter-spacing: 0.5px;
+    }
+    .solution-tier-badge.main { background: #ebf4ff; color: #2b6cb0; border: 1px solid #90cdf4; }
+    .solution-tier-badge.sub  { background: #edf2f7; color: #4a5568; border: 1px solid #cbd5e0; }
+    .solution-reasons {
+      font-size: 13px;
+      color: #4a5568;
+      line-height: 1.75;
+      margin: 0;
+      padding-left: 20px;
+    }
+    .solution-reasons li { margin-bottom: 2px; }
+    .solution-from {
+      margin-top: 10px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 4px;
+    }
+    .solution-from-tag {
+      font-size: 11px;
+      background: #f7fafc;
+      color: #718096;
+      border: 1px solid #e2e8f0;
+      border-radius: 10px;
+      padding: 2px 10px;
+    }
+    .solution-empty {
+      text-align: center;
+      padding: 24px;
+      color: #718096;
+      font-size: 13px;
+    }
+
+    /* Hint chips */
+    .hint-chip {
+      background: white;
+      color: #4a5568;
+      border: 1px solid #cbd5e0;
+      border-radius: 14px;
+      padding: 4px 12px;
+      font-size: 12px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.15s;
+      font-family: inherit;
+    }
+    .hint-chip:hover {
+      background: #ebf4ff;
+      border-color: #0066cc;
+      color: #0066cc;
+    }
+    .hint-chip.used {
+      background: #f0fff4;
+      border-color: #9ae6b4;
+      color: #276749;
+      opacity: 0.8;
+    }
+
+    /* Section separator inside confirm page */
+    .confirm-section-header {
+      background: #f0f4f8;
+      color: #003366;
+      font-weight: 700;
+      padding: 10px 16px;
+      font-size: 13px;
+      letter-spacing: 1px;
+      border-top: 1px solid #e2e8f0;
+      border-bottom: 1px solid #e2e8f0;
+    }
+    .confirm-section-header:first-child { border-top: none; }
+
+    /* Print */
+    .print-footer { display: none; }
+    @page {
+      size: A4;
+      margin: 15mm 12mm 20mm 12mm;
+    }
+    @media print {
+      * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
+      body { background: white; font-size: 10.5pt; color: #000; }
+
+      /* Hide UI */
+      .confirm-actions, #form-page, #list-page, .header-nav, .draft-banner,
+      .toast, .solution-empty { display: none !important; }
+      #confirm-page { display: block !important; }
+
+      /* Solid header (gradient prints poorly on some printers) */
+      .header {
+        background: #003366 !important;
+        color: white !important;
+        padding: 12px 20px;
+        box-shadow: none;
+      }
+      .header-logo { font-size: 20px; border-right-color: rgba(255,255,255,0.6); }
+      .header-title { font-size: 13px; }
+
+      /* Container */
+      .container { max-width: 100%; margin: 12px auto; padding: 0 8px; }
+
+      /* Cards */
+      .card {
+        box-shadow: none;
+        border: 1px solid #999;
+        page-break-inside: avoid;
+        break-inside: avoid;
+        margin-bottom: 12px;
+      }
+      .card-header {
+        background: #003366 !important;
+        color: white !important;
+        padding: 8px 14px;
+        font-size: 12pt;
+      }
+      .card-body { padding: 14px 16px; }
+
+      /* Confirm table */
+      .confirm-table td { padding: 8px 12px; font-size: 10pt; }
+      .confirm-table td:first-child { background: #f0f4f8 !important; width: 130px; }
+      .confirm-section-header {
+        background: #e2e8f0 !important;
+        color: #003366 !important;
+        page-break-after: avoid;
+        break-after: avoid;
+      }
+
+      /* Tags & badges */
+      .tag {
+        background: #ebf4ff !important;
+        color: #0066cc !important;
+        border-color: #bee3f8 !important;
+      }
+      .grade-badge.A  { background: #fff5f5 !important; color: #c53030 !important; }
+      .grade-badge.B  { background: #fffaf0 !important; color: #c05621 !important; }
+      .grade-badge.C1 { background: #ebf8ff !important; color: #2b6cb0 !important; }
+      .grade-badge.C2 { background: #e6fffa !important; color: #2c7a7b !important; }
+      .grade-badge.D  { background: #edf2f7 !important; color: #4a5568 !important; }
+
+      /* Solutions */
+      .solution-item { page-break-inside: avoid; break-inside: avoid; }
+      .solution-item.tier-main { border-left-color: #0066cc !important; }
+      .solution-tier-badge.main { background: #ebf4ff !important; color: #2b6cb0 !important; }
+      .solution-tier-badge.sub  { background: #edf2f7 !important; color: #4a5568 !important; }
+
+      /* Fixed print footer */
+      .print-footer {
+        display: block !important;
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        padding: 6px 12mm;
+        font-size: 9pt;
+        color: #4a5568;
+        border-top: 1px solid #999;
+        background: white;
+        text-align: center;
+      }
+      .print-footer strong { color: #003366; }
+    }
+  </style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-left">
+    <div class="header-logo">鼎新</div>
+    <div class="header-title">ERP 系統評估 — 客戶需求蒐集平台</div>
+  </div>
+  <div class="header-nav">
+    <button class="nav-btn" onclick="goList()">📋 客戶列表</button>
+  </div>
+</div>
+
+<div class="container">
+
+  <!-- ══════════════ LIST PAGE ══════════════ -->
+  <div id="list-page">
+    <div class="card">
+      <div class="card-header" style="display:flex;justify-content:space-between;align-items:center;">
+        <span>📋 客戶清單</span>
+        <button class="btn-primary" style="padding:8px 22px;font-size:14px;" onclick="goNewForm()">＋ 新增客戶</button>
+      </div>
+      <div class="card-body">
+        <div class="list-toolbar">
+          <input type="text" id="search-input" placeholder="🔍 搜尋客戶名稱、業務員、產品類型..." oninput="renderList()">
+          <select id="filter-grade" onchange="renderList()" style="max-width:180px;">
+            <option value="">全部商機等級</option>
+            <option value="A">A — 熱單</option>
+            <option value="B">B — 溫單</option>
+            <option value="C1">C1 — 中溫</option>
+            <option value="C2">C2 — 冷追蹤</option>
+            <option value="D">D — 觀察名單</option>
+          </select>
+          <select id="sort-by" onchange="renderList()" style="max-width:160px;">
+            <option value="updated">最近更新</option>
+            <option value="visit">拜訪日期</option>
+            <option value="grade">商機等級</option>
+            <option value="name">客戶名稱</option>
+          </select>
+        </div>
+        <div id="list-container"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════ FORM PAGE ══════════════ -->
+  <div id="form-page" style="display:none;">
+
+    <div class="draft-banner" id="draft-banner" style="display:none;">
+      <div class="draft-text">
+        📝 偵測到未完成的草稿（<span id="draft-time"></span>），是否繼續編輯？
+      </div>
+      <div class="draft-actions">
+        <button class="btn-mini" onclick="restoreDraft()">繼續編輯</button>
+        <button class="btn-danger" onclick="discardDraft()">放棄</button>
+      </div>
+    </div>
+
+    <!-- ⚡ 智能辨識填入 -->
+    <div class="card">
+      <div class="card-header" style="cursor:pointer;display:flex;justify-content:space-between;align-items:center;" onclick="toggleAutoFillPanel()">
+        <span>⚡ 智能辨識填入</span>
+        <span id="af-arrow" style="font-size:12px;opacity:0.75;">▲ 收合</span>
+      </div>
+      <div id="af-panel" class="card-body">
+        <p style="font-size:13px;color:#718096;margin-bottom:14px;line-height:1.7;">
+          貼上電話記錄、拜訪備忘或會議筆記，系統將自動辨識關鍵字並填入對應欄位。辨識後可再手動調整。
+        </p>
+        <textarea id="af-input" style="min-height:130px;" placeholder="例：今天拜訪統一服飾，員工約80人，目前用正航，有SHOPEE和MOMO電商通路，另有15家門店，想6個月內導入T100和CRM，主要困擾是訂單要手動匯入、庫存對不準。聯絡人陳經理 0912-345-678..."></textarea>
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-top:12px;gap:10px;flex-wrap:wrap;">
+          <div style="display:flex;gap:8px;flex-wrap:wrap;">
+            <button class="btn-secondary" style="padding:8px 16px;font-size:13px;" onclick="clearAfInput()">清除文字</button>
+            <button class="btn-secondary" style="padding:8px 16px;font-size:13px;" onclick="clearAndRerun()">🔄 清空表單重填</button>
+          </div>
+          <button class="btn-primary" style="padding:10px 28px;" onclick="runAutoFill()">辨識填入 →</button>
+        </div>
+        <div id="af-result" style="display:none;margin-top:12px;"></div>
+      </div>
+    </div>
+
+    <!-- Card A: 業務資訊 -->
+    <div class="card">
+      <div class="card-header">📌 業務資訊</div>
+      <div class="card-body">
+        <div class="row-3">
+          <div class="field">
+            <label>業務員 <span class="required">*</span></label>
+            <input type="text" id="f-salesperson" placeholder="例：林小明">
+            <div class="field-error" id="err-salesperson">請填寫業務員姓名</div>
+          </div>
+          <div class="field">
+            <label>拜訪日期</label>
+            <input type="date" id="f-visit-date">
+          </div>
+          <div class="field">
+            <label>下次追蹤日</label>
+            <input type="date" id="f-followup-date">
+          </div>
+        </div>
+
+        <div class="field">
+          <label>商機等級 <span class="required">*</span> <span class="hint">依可能成交時程分級</span></label>
+          <div class="grade-group" id="f-grade">
+            <label class="grade-item" data-grade="A" onclick="selectGrade('A')">
+              <input type="radio" name="grade" value="A">
+              <span class="grade-label">A</span>
+              <span class="grade-desc">熱單<br>3月內成交</span>
+            </label>
+            <label class="grade-item" data-grade="B" onclick="selectGrade('B')">
+              <input type="radio" name="grade" value="B">
+              <span class="grade-label">B</span>
+              <span class="grade-desc">溫單<br>6月內推進</span>
+            </label>
+            <label class="grade-item" data-grade="C1" onclick="selectGrade('C1')">
+              <input type="radio" name="grade" value="C1">
+              <span class="grade-label">C1</span>
+              <span class="grade-desc">中溫<br>1年內追蹤</span>
+            </label>
+            <label class="grade-item" data-grade="C2" onclick="selectGrade('C2')">
+              <input type="radio" name="grade" value="C2">
+              <span class="grade-label">C2</span>
+              <span class="grade-desc">冷單<br>需要培育</span>
+            </label>
+            <label class="grade-item" data-grade="D" onclick="selectGrade('D')">
+              <input type="radio" name="grade" value="D">
+              <span class="grade-label">D</span>
+              <span class="grade-desc">觀察<br>資訊蒐集</span>
+            </label>
+          </div>
+          <div class="field-error" id="err-grade">請選擇商機等級</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Card B: 客戶基本外觀資料 -->
+    <div class="card">
+      <div class="card-header">🏢 客戶基本外觀資料</div>
+      <div class="card-body">
+
+        <div class="row-2">
+          <div class="field">
+            <label>客戶名稱 <span class="required">*</span></label>
+            <input type="text" id="f-name" placeholder="例：統一超商股份有限公司">
+            <div class="field-error" id="err-name">請填寫客戶名稱</div>
+          </div>
+          <div class="field">
+            <label>統一編號 <span class="hint">8 碼</span></label>
+            <input type="text" id="f-tax-id" placeholder="12345678" maxlength="8">
+            <div class="field-error" id="err-tax-id">統編需為 8 碼數字</div>
+          </div>
+        </div>
+
+        <div class="field">
+          <label>👤 聯絡人資訊</label>
+          <div class="sub-section">
+            <div class="row-2">
+              <div class="field" style="margin-bottom:14px;">
+                <label style="font-size:13px;">姓名</label>
+                <input type="text" id="f-contact-name" placeholder="例：陳經理">
+              </div>
+              <div class="field" style="margin-bottom:14px;">
+                <label style="font-size:13px;">職稱</label>
+                <input type="text" id="f-contact-title" placeholder="例：資訊部主管">
+              </div>
+            </div>
+            <div class="row-2">
+              <div class="field" style="margin-bottom:0;">
+                <label style="font-size:13px;">電話</label>
+                <input type="tel" id="f-contact-phone" placeholder="例：02-1234-5678 或 0912-345-678">
+              </div>
+              <div class="field" style="margin-bottom:0;">
+                <label style="font-size:13px;">Email</label>
+                <input type="email" id="f-contact-email" placeholder="例：chen@company.com">
+                <div class="field-error" id="err-email">Email 格式不正確</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="field">
+          <label>銷售通路（可複選）<span class="required">*</span></label>
+          <div class="checkbox-group" id="f-channels">
+            <label class="checkbox-item" id="cb-ec" onclick="toggleCheck(this)">
+              <input type="checkbox" value="電商"> <span>電商</span>
+            </label>
+            <label class="checkbox-item" id="cb-web" onclick="toggleCheck(this)">
+              <input type="checkbox" value="官網"> <span>官網</span>
+            </label>
+            <label class="checkbox-item" onclick="toggleCheck(this)">
+              <input type="checkbox" value="批發"> <span>批發</span>
+            </label>
+            <label class="checkbox-item" id="cb-store" onclick="toggleCheck(this)">
+              <input type="checkbox" value="門店"> <span>門店</span>
+            </label>
+            <label class="checkbox-item" id="cb-other" onclick="toggleCheck(this)">
+              <input type="checkbox" value="其他"> <span>其他</span>
+            </label>
+          </div>
+          <div class="other-input sub-section" id="channel-ec-wrap">
+            <div class="sub-label">電商平台（可複選）</div>
+            <div class="checkbox-group" id="ec-platforms">
+              <label class="checkbox-item" onclick="toggleCheck(this)"><input type="checkbox" value="SHOPEE"> <span>SHOPEE</span></label>
+              <label class="checkbox-item" onclick="toggleCheck(this)"><input type="checkbox" value="PCHOME"> <span>PCHOME</span></label>
+              <label class="checkbox-item" onclick="toggleCheck(this)"><input type="checkbox" value="MOMO"> <span>MOMO</span></label>
+              <label class="checkbox-item" onclick="toggleCheck(this)"><input type="checkbox" value="YAHOO"> <span>YAHOO</span></label>
+            </div>
+          </div>
+          <div class="other-input sub-section" id="channel-web-wrap">
+            <div class="sub-label">官網廠商</div>
+            <div class="radio-group" id="f-web-vendor">
+              <label class="radio-item" onclick="selectRadio(this, 'web-vendor')"><input type="radio" name="web-vendor" value="SHOPLINE"> <span>SHOPLINE</span></label>
+              <label class="radio-item" onclick="selectRadio(this, 'web-vendor')"><input type="radio" name="web-vendor" value="CYBERBIZ"> <span>CYBERBIZ</span></label>
+              <label class="radio-item" onclick="selectRadio(this, 'web-vendor')"><input type="radio" name="web-vendor" value="91APP"> <span>91APP</span></label>
+              <label class="radio-item" onclick="selectRadio(this, 'web-vendor')"><input type="radio" name="web-vendor" value="SHOPIFY"> <span>SHOPIFY</span></label>
+              <label class="radio-item" onclick="selectRadio(this, 'web-vendor')"><input type="radio" name="web-vendor" value="其他"> <span>其他</span></label>
+            </div>
+          </div>
+          <div class="other-input sub-section" id="channel-store-wrap">
+            <div class="sub-label">門店數（家）</div>
+            <input type="number" id="store-count" min="1" style="width:160px;" placeholder="例：25">
+          </div>
+          <div class="other-input" id="channel-other-wrap">
+            <input type="text" id="channel-other" placeholder="請說明其他通路">
+          </div>
+          <div class="field-error" id="err-channels">請至少選擇一項銷售通路</div>
+        </div>
+
+        <div class="row-2">
+          <div class="field">
+            <label>資本額</label>
+            <select id="f-capital">
+              <option value="">— 請選擇 —</option>
+              <option>500萬以下</option>
+              <option>500萬～1,000萬</option>
+              <option>1,000萬～5,000萬</option>
+              <option>5,000萬～1億</option>
+              <option>1億～5億</option>
+              <option>5億以上</option>
+            </select>
+          </div>
+          <div class="field">
+            <label>公司人數</label>
+            <select id="f-headcount">
+              <option value="">— 請選擇 —</option>
+              <option>10人以下</option>
+              <option>11～50人</option>
+              <option>51～100人</option>
+              <option>101～300人</option>
+              <option>301～500人</option>
+              <option>500人以上</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="field">
+          <label>產品類型</label>
+          <input type="text" id="f-product-type" placeholder="例：服飾、食品、3C 電子、零件代理、美妝保養...">
+        </div>
+
+        <div class="field">
+          <label>生產方式（可複選）</label>
+          <div class="checkbox-group" id="f-production">
+            <label class="checkbox-item" onclick="toggleCheck(this)"><input type="checkbox" value="自行生產"> <span>自行生產</span></label>
+            <label class="checkbox-item" onclick="toggleCheck(this)"><input type="checkbox" value="委外代工"> <span>委外代工</span></label>
+            <label class="checkbox-item" onclick="toggleCheck(this)"><input type="checkbox" value="兩者皆有"> <span>兩者皆有</span></label>
+            <label class="checkbox-item" onclick="toggleCheck(this)"><input type="checkbox" value="純流通（不生產）"> <span>純流通（不生產）</span></label>
+          </div>
+        </div>
+
+        <div class="field">
+          <label>是否有關係公司 / 母子公司</label>
+          <div class="radio-group" id="f-related">
+            <label class="radio-item" onclick="selectRadio(this, 'related')"><input type="radio" name="related" value="是"> <span>是</span></label>
+            <label class="radio-item" onclick="selectRadio(this, 'related')"><input type="radio" name="related" value="否"> <span>否</span></label>
+            <label class="radio-item" onclick="selectRadio(this, 'related')"><input type="radio" name="related" value="待確認"> <span>待確認</span></label>
+          </div>
+          <div class="other-input" id="related-detail-wrap">
+            <input type="text" id="f-related-detail" placeholder="請說明關係公司或子公司名稱">
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Card C: 需求與痛點 -->
+    <div class="card">
+      <div class="card-header">💡 需求與痛點</div>
+      <div class="card-body">
+
+        <div class="field">
+          <label>客戶麻煩 / 困擾 / 障礙 <span class="required">*</span></label>
+          <textarea id="f-pain" placeholder="請描述客戶目前面臨的問題、痛點或挑戰。例：庫存資料不準確、電商訂單需手動匯入、人事薪資計算耗時..."></textarea>
+          <div class="field-error" id="err-pain">請填寫客戶困擾或痛點</div>
+        </div>
+
+        <div class="field">
+          <label>現行系統（可複選）<span class="hint">評估目前系統弱點，提供改善方向</span></label>
+          <div class="checkbox-group" id="f-current-sys">
+            <label class="checkbox-item" onclick="toggleCheck(this)"><input type="checkbox" value="無系統"> <span>無系統</span></label>
+            <label class="checkbox-item" onclick="toggleCheck(this)"><input type="checkbox" value="Excel / 人工"> <span>Excel / 人工</span></label>
+            <label class="checkbox-item" onclick="toggleCheck(this)"><input type="checkbox" value="正航"> <span>正航</span></label>
+            <label class="checkbox-item" onclick="toggleCheck(this)"><input type="checkbox" value="SAP"> <span>SAP</span></label>
+            <label class="checkbox-item" onclick="toggleCheck(this)"><input type="checkbox" value="Oracle"> <span>Oracle</span></label>
+            <label class="checkbox-item" id="cb-sys-other" onclick="toggleCheck(this)"><input type="checkbox" value="其他"> <span>其他</span></label>
+          </div>
+          <div class="other-input" id="sys-other-wrap">
+            <input type="text" id="sys-other-text" placeholder="請說明其他系統">
+          </div>
+
+          <div class="sub-section" style="margin-top:14px;">
+            <div class="sub-label">📉 現行系統弱點與改善方向</div>
+
+            <div class="field" style="margin-bottom:14px;">
+              <label style="font-size:13px;font-weight:600;">現行系統弱點 <span class="hint">目前無法滿足的部分</span></label>
+              <textarea id="f-sys-weakness" placeholder="例：電商訂單無法自動下拉、彈性報表少、UI 老舊..." style="min-height:70px;"></textarea>
+              <div id="weakness-hints-wrap" style="margin-top:8px;display:none;">
+                <div style="font-size:12px;color:#718096;margin-bottom:6px;">💡 依已勾選系統快速加入常見弱點：</div>
+                <div id="weakness-hints" style="display:flex;flex-wrap:wrap;gap:6px;"></div>
+              </div>
+            </div>
+
+            <div class="field" style="margin-bottom:0;">
+              <label style="font-size:13px;font-weight:600;">改善方向 <span class="hint">導入鼎新後能改善的部分</span></label>
+              <textarea id="f-sys-improvement" placeholder="例：串接電商訂單自動下拉、庫存即時同步、行動化簽核..." style="min-height:70px;"></textarea>
+              <div id="improvement-hints-wrap" style="margin-top:8px;display:none;">
+                <div style="font-size:12px;color:#718096;margin-bottom:6px;">💡 依已勾選 ERP II 快速加入建議改善方向：</div>
+                <div id="improvement-hints" style="display:flex;flex-wrap:wrap;gap:6px;"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="field">
+          <label>ERP 需求（可複選）</label>
+          <div class="checkbox-group" id="f-erp">
+            <label class="checkbox-item" onclick="toggleCheck(this)"><input type="checkbox" value="T100"> <span>T100</span></label>
+            <label class="checkbox-item" onclick="toggleCheck(this)"><input type="checkbox" value="Cosmos"> <span>Cosmos</span></label>
+            <label class="checkbox-item" onclick="toggleCheck(this)"><input type="checkbox" value="Workflow"> <span>Workflow</span></label>
+          </div>
+        </div>
+
+        <div class="field">
+          <label>ERP II 需求（可複選）</label>
+          <div class="checkbox-group" id="f-erp2">
+            <label class="checkbox-item" onclick="toggleCheck(this)"><input type="checkbox" value="CRM"> <span>CRM</span></label>
+            <label class="checkbox-item" onclick="toggleCheck(this)"><input type="checkbox" value="HR"> <span>HR</span></label>
+            <label class="checkbox-item" onclick="toggleCheck(this)"><input type="checkbox" value="DSP"> <span>DSP</span></label>
+            <label class="checkbox-item" onclick="toggleCheck(this)"><input type="checkbox" value="PDA"> <span>PDA</span></label>
+            <label class="checkbox-item" onclick="toggleCheck(this)"><input type="checkbox" value="AI"> <span>AI</span></label>
+            <label class="checkbox-item" onclick="toggleCheck(this)"><input type="checkbox" value="BI"> <span>BI</span></label>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Card D: 商業判斷 -->
+    <div class="card">
+      <div class="card-header">🎯 商業判斷</div>
+      <div class="card-body">
+
+        <div class="row-2">
+          <div class="field">
+            <label>期望導入時間</label>
+            <select id="f-timeline">
+              <option value="">— 請選擇 —</option>
+              <option>1個月內</option>
+              <option>3個月內</option>
+              <option>6個月內</option>
+              <option>半年～1年</option>
+              <option>1年以上</option>
+              <option>尚未確定</option>
+            </select>
+          </div>
+          <div class="field">
+            <label>預算範圍</label>
+            <select id="f-budget">
+              <option value="">— 請選擇 —</option>
+              <option>50萬以下</option>
+              <option>50~200萬</option>
+              <option>200~500萬</option>
+              <option>500~1,000萬</option>
+              <option>1,000萬以上</option>
+              <option>尚未評估</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="field">
+          <label>決策鏈（可複選）<span class="hint">誰會影響採購決定</span></label>
+          <div class="checkbox-group" id="f-decision">
+            <label class="checkbox-item" onclick="toggleCheck(this)"><input type="checkbox" value="老闆/董事長"> <span>老闆/董事長</span></label>
+            <label class="checkbox-item" onclick="toggleCheck(this)"><input type="checkbox" value="執行長/總經理"> <span>執行長/總經理</span></label>
+            <label class="checkbox-item" onclick="toggleCheck(this)"><input type="checkbox" value="IT主管"> <span>IT主管</span></label>
+            <label class="checkbox-item" onclick="toggleCheck(this)"><input type="checkbox" value="財務主管"> <span>財務主管</span></label>
+            <label class="checkbox-item" onclick="toggleCheck(this)"><input type="checkbox" value="使用單位主管"> <span>使用單位主管</span></label>
+            <label class="checkbox-item" onclick="toggleCheck(this)"><input type="checkbox" value="董事會"> <span>董事會</span></label>
+          </div>
+        </div>
+
+        <div class="field">
+          <label>備註 <span class="hint">其他補充事項</span></label>
+          <textarea id="f-notes" placeholder="例：客戶目前使用的機房設備、特殊需求、下次拜訪重點、競爭對手資訊..." style="min-height:80px;"></textarea>
+        </div>
+      </div>
+
+      <div class="form-actions">
+        <div class="form-progress">已填寫 <strong id="progress-count">0</strong> / <span id="progress-total">18</span> 欄</div>
+        <div style="display:flex;gap:10px;">
+          <button class="btn-secondary" onclick="goList()">取消</button>
+          <button class="btn-primary" onclick="submitForm()">確認並預覽 →</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════ CONFIRM PAGE ══════════════ -->
+  <div id="confirm-page" style="display:none;">
+    <div class="confirm-intro">
+      請確認以下蒐集到的客戶資訊。確認後可儲存到客戶列表，或直接匯出給下一階段（解決方案對應 / 簡報生成）使用。
+    </div>
+
+    <div class="card">
+      <div class="card-header" id="confirm-client-name">客戶資料確認</div>
+      <div class="card-body" style="padding:0;">
+        <table class="confirm-table" id="confirm-table"></table>
+      </div>
+      <div class="confirm-actions">
+        <button class="btn-secondary" onclick="goBack()">← 返回修改</button>
+        <div class="action-group">
+          <button class="btn-mini" onclick="downloadJSON()" title="供第二階段解決方案對應使用">⬇️ JSON</button>
+          <button class="btn-mini" onclick="downloadMarkdown()" title="供第三階段簡報生成使用">⬇️ Markdown</button>
+          <button class="btn-mini" onclick="copyStructured()" title="複製給主管/同事">📋 複製</button>
+          <button class="btn-mini" onclick="printPage()">🖨️ 列印</button>
+          <button class="btn-primary" onclick="saveAndGoList()" style="padding:10px 22px;font-size:14px;">💾 儲存到列表</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Solutions card (populated dynamically by buildConfirm) -->
+    <div class="card" id="solutions-card" style="display:none;">
+      <div class="card-header">
+        🎁 初步解決方案建議
+        <span style="font-size:11px;font-weight:400;opacity:0.8;margin-left:8px;">實際導入方案請以顧問評估為準</span>
+      </div>
+      <div class="card-body">
+        <div class="solution-intro">
+          系統依照客戶通路、痛點、規模、生產方式、現行系統等條件自動對應鼎新產品組合。<strong>主推</strong>為核心建議，<strong>建議</strong>為配套或延伸方案。
+        </div>
+        <div class="solution-list" id="solutions-list"></div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<div class="toast" id="toast"></div>
+
+<div class="print-footer" id="print-footer">
+  <span id="print-footer-content"></span>
+</div>
+
+<script>
+  // ══════════════════════════════════════════
+  //  Storage keys
+  // ══════════════════════════════════════════
+  const KEY_CLIENTS = 'dinghsin.clients';
+  const KEY_DRAFT   = 'dinghsin.draft';
+
+  // Editing state
+  let editingId = null;      // client id being edited (null = new)
+  let currentData = null;    // last-submitted data (for confirm page)
+  let draftTimer = null;
+
+  // ══════════════════════════════════════════
+  //  Init
+  // ══════════════════════════════════════════
+  document.addEventListener('DOMContentLoaded', () => {
+    goList();
+    // Set default visit date
+    setDefaultDates();
+  });
+
+  function setDefaultDates() {
+    const today = new Date().toISOString().slice(0, 10);
+    const vd = document.getElementById('f-visit-date');
+    if (vd && !vd.value) vd.value = today;
+  }
+
+  // ══════════════════════════════════════════
+  //  Navigation
+  // ══════════════════════════════════════════
+  function showPage(pageId) {
+    ['list-page', 'form-page', 'confirm-page'].forEach(id => {
+      document.getElementById(id).style.display = id === pageId ? 'block' : 'none';
+    });
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  function goList() {
+    stopDraftTimer();
+    renderList();
+    showPage('list-page');
+  }
+
+  function goNewForm() {
+    editingId = null;
+    resetForm();
+    setDefaultDates();
+    checkDraft();
+    startDraftTimer();
+    showPage('form-page');
+  }
+
+  function goEditForm(id) {
+    const clients = getAllClients();
+    const rec = clients[id];
+    if (!rec) { showToast('找不到該筆資料', 'error'); return; }
+    editingId = id;
+    resetForm();
+    populateForm(rec);
+    hideDraftBanner();
+    startDraftTimer();
+    showPage('form-page');
+  }
+
+  function goBack() {
+    startDraftTimer();
+    showPage('form-page');
+  }
+
+  // ══════════════════════════════════════════
+  //  Storage helpers
+  // ══════════════════════════════════════════
+  function getAllClients() {
+    try { return JSON.parse(localStorage.getItem(KEY_CLIENTS) || '{}'); }
+    catch { return {}; }
+  }
+
+  function saveClientRecord(rec) {
+    const all = getAllClients();
+    all[rec.id] = rec;
+    localStorage.setItem(KEY_CLIENTS, JSON.stringify(all));
+  }
+
+  function deleteClientRecord(id) {
+    const all = getAllClients();
+    delete all[id];
+    localStorage.setItem(KEY_CLIENTS, JSON.stringify(all));
+  }
+
+  // ══════════════════════════════════════════
+  //  Draft handling
+  // ══════════════════════════════════════════
+  function startDraftTimer() {
+    stopDraftTimer();
+    draftTimer = setInterval(() => {
+      if (document.getElementById('form-page').style.display === 'none') return;
+      const data = collectFormData();
+      if (hasFormContent(data)) {
+        data._savedAt = new Date().toISOString();
+        data._editingId = editingId;
+        localStorage.setItem(KEY_DRAFT, JSON.stringify(data));
+      }
+    }, 3000);
+  }
+
+  function stopDraftTimer() {
+    if (draftTimer) { clearInterval(draftTimer); draftTimer = null; }
+  }
+
+  function hasFormContent(d) {
+    return !!(d.name || d.pain || d.salesperson ||
+      (d.channels && d.channels.length) ||
+      (d.contact && (d.contact.name || d.contact.phone)));
+  }
+
+  function checkDraft() {
+    const raw = localStorage.getItem(KEY_DRAFT);
+    if (!raw) { hideDraftBanner(); return; }
+    try {
+      const draft = JSON.parse(raw);
+      // Skip if draft belongs to a different edit context
+      if (draft._editingId && draft._editingId !== editingId) { hideDraftBanner(); return; }
+      const savedAt = draft._savedAt ? new Date(draft._savedAt) : null;
+      const timeStr = savedAt ? savedAt.toLocaleString('zh-TW') : '未知時間';
+      document.getElementById('draft-time').textContent = timeStr;
+      document.getElementById('draft-banner').style.display = 'flex';
+    } catch { hideDraftBanner(); }
+  }
+
+  function hideDraftBanner() {
+    document.getElementById('draft-banner').style.display = 'none';
+  }
+
+  function restoreDraft() {
+    const raw = localStorage.getItem(KEY_DRAFT);
+    if (!raw) return;
+    try {
+      const draft = JSON.parse(raw);
+      populateForm(draft);
+      hideDraftBanner();
+      showToast('已還原草稿', 'success');
+    } catch { showToast('草稿還原失敗', 'error'); }
+  }
+
+  function discardDraft() {
+    localStorage.removeItem(KEY_DRAFT);
+    hideDraftBanner();
+    showToast('草稿已放棄');
+  }
+
+  // ══════════════════════════════════════════
+  //  Form: reset / populate / collect
+  // ══════════════════════════════════════════
+  function resetForm() {
+    // Clear all text/number/date inputs and textareas
+    document.querySelectorAll('#form-page input[type="text"], #form-page input[type="number"], #form-page input[type="email"], #form-page input[type="tel"], #form-page input[type="date"], #form-page textarea')
+      .forEach(el => { el.value = ''; el.classList.remove('invalid'); });
+    // Clear selects
+    document.querySelectorAll('#form-page select').forEach(el => el.value = '');
+    // Uncheck all checkboxes/radios
+    document.querySelectorAll('#form-page input[type="checkbox"], #form-page input[type="radio"]').forEach(el => el.checked = false);
+    document.querySelectorAll('#form-page .checkbox-item.checked, #form-page .radio-item.checked, #form-page .grade-item.checked')
+      .forEach(el => el.classList.remove('checked'));
+    // Hide all sub-sections
+    document.querySelectorAll('#form-page .other-input.visible').forEach(el => el.classList.remove('visible'));
+    // Hide errors
+    document.querySelectorAll('#form-page .field-error').forEach(el => el.style.display = 'none');
+    // Reset autofill
+    document.getElementById('af-input').value = '';
+    document.getElementById('af-result').style.display = 'none';
+    // Hide hint chip containers
+    const wh = document.getElementById('weakness-hints-wrap');
+    const ih = document.getElementById('improvement-hints-wrap');
+    if (wh) wh.style.display = 'none';
+    if (ih) ih.style.display = 'none';
+    updateProgress();
+  }
+
+  function collectFormData() {
+    return {
+      // 業務資訊
+      salesperson:   val('f-salesperson'),
+      visitDate:     val('f-visit-date'),
+      followupDate:  val('f-followup-date'),
+      grade:         getRadio('grade'),
+      // 客戶基本
+      name:          val('f-name'),
+      taxId:         val('f-tax-id'),
+      contact: {
+        name:  val('f-contact-name'),
+        title: val('f-contact-title'),
+        phone: val('f-contact-phone'),
+        email: val('f-contact-email'),
+      },
+      channels: getChannels(),
+      channelDetails: {
+        ecPlatforms:   getChecked('ec-platforms'),
+        webVendor:     getRadio('web-vendor'),
+        storeCount:    val('store-count'),
+        channelOther:  val('channel-other'),
+      },
+      capital:       val('f-capital'),
+      headcount:     val('f-headcount'),
+      productType:   val('f-product-type'),
+      production:    getChecked('f-production'),
+      related:       getRadio('related'),
+      relatedDetail: val('f-related-detail'),
+      // 需求
+      pain:          val('f-pain'),
+      currentSys:    getCurrentSystems(),
+      sysOther:      val('sys-other-text'),
+      sysWeakness:   val('f-sys-weakness'),
+      sysImprovement: val('f-sys-improvement'),
+      erp:           getChecked('f-erp'),
+      erp2:          getChecked('f-erp2'),
+      // 商業判斷
+      timeline:      val('f-timeline'),
+      budget:        val('f-budget'),
+      decision:      getChecked('f-decision'),
+      notes:         val('f-notes'),
+    };
+  }
+
+  function populateForm(d) {
+    if (!d) return;
+    resetForm();
+    // 業務
+    set('f-salesperson', d.salesperson);
+    set('f-visit-date', d.visitDate);
+    set('f-followup-date', d.followupDate);
+    if (d.grade) selectGrade(d.grade);
+    // 客戶基本
+    set('f-name', d.name);
+    set('f-tax-id', d.taxId);
+    if (d.contact) {
+      set('f-contact-name',  d.contact.name);
+      set('f-contact-title', d.contact.title);
+      set('f-contact-phone', d.contact.phone);
+      set('f-contact-email', d.contact.email);
+    }
+    // 通路 (rebuild from raw channels array — strip descriptors)
+    if (d.channels && d.channels.length) {
+      d.channels.forEach(c => {
+        const base = c.replace(/（.+）$/, '').trim();
+        checkItem('#f-channels', base);
+      });
+    }
+    if (d.channelDetails) {
+      (d.channelDetails.ecPlatforms || []).forEach(v => checkItem('#ec-platforms', v));
+      if (d.channelDetails.webVendor) pickRadio('web-vendor', d.channelDetails.webVendor);
+      set('store-count', d.channelDetails.storeCount);
+      set('channel-other', d.channelDetails.channelOther);
+    }
+    set('f-capital', d.capital);
+    set('f-headcount', d.headcount);
+    set('f-product-type', d.productType);
+    (d.production || []).forEach(v => checkItem('#f-production', v));
+    if (d.related) pickRadio('related', d.related);
+    set('f-related-detail', d.relatedDetail);
+    // 需求
+    set('f-pain', d.pain);
+    (d.currentSys || []).forEach(v => {
+      const base = v.replace(/（.+）$/, '').trim();
+      checkItem('#f-current-sys', base);
+    });
+    set('sys-other-text', d.sysOther);
+    set('f-sys-weakness', d.sysWeakness);
+    set('f-sys-improvement', d.sysImprovement);
+    (d.erp || []).forEach(v => checkItem('#f-erp', v));
+    (d.erp2 || []).forEach(v => checkItem('#f-erp2', v));
+    refreshWeaknessHints();
+    refreshImprovementHints();
+    // 商業判斷
+    set('f-timeline', d.timeline);
+    set('f-budget', d.budget);
+    (d.decision || []).forEach(v => checkItem('#f-decision', v));
+    set('f-notes', d.notes);
+
+    updateProgress();
+  }
+
+  // ══════════════════════════════════════════
+  //  Field helpers
+  // ══════════════════════════════════════════
+  function val(id) { const el = document.getElementById(id); return el ? el.value.trim() : ''; }
+  function set(id, v) { const el = document.getElementById(id); if (el && v != null) el.value = v; }
+
+  function toggleCheck(el) {
+    const cb = el.querySelector('input[type="checkbox"]');
+    setTimeout(() => {
+      el.classList.toggle('checked', cb.checked);
+      const mapping = {
+        'cb-ec':        'channel-ec-wrap',
+        'cb-web':       'channel-web-wrap',
+        'cb-store':     'channel-store-wrap',
+        'cb-other':     'channel-other-wrap',
+        'cb-sys-other': 'sys-other-wrap',
+      };
+      if (el.id && mapping[el.id]) {
+        document.getElementById(mapping[el.id]).classList.toggle('visible', cb.checked);
+      }
+      // Refresh hint chips when 現行系統 / ERP II changes
+      if (el.closest('#f-current-sys')) refreshWeaknessHints();
+      if (el.closest('#f-erp2'))        refreshImprovementHints();
+      updateProgress();
+    }, 0);
+  }
+
+  function selectRadio(el, group) {
+    document.querySelectorAll(`#f-${group} .radio-item`).forEach(r => r.classList.remove('checked'));
+    setTimeout(() => {
+      el.classList.add('checked');
+      if (group === 'related') {
+        const v = el.querySelector('input').value;
+        document.getElementById('related-detail-wrap').classList.toggle('visible', v === '是');
+      }
+      updateProgress();
+    }, 0);
+  }
+
+  function selectGrade(g) {
+    document.querySelectorAll('#f-grade .grade-item').forEach(el => el.classList.remove('checked'));
+    const target = document.querySelector(`#f-grade .grade-item[data-grade="${g}"]`);
+    if (target) {
+      target.classList.add('checked');
+      const radio = target.querySelector('input[type="radio"]');
+      if (radio) radio.checked = true;
+    }
+    document.getElementById('err-grade').style.display = 'none';
+    updateProgress();
+  }
+
+  function checkItem(groupSelector, value) {
+    const cb = document.querySelector(`${groupSelector} input[value="${value}"]`);
+    if (cb && !cb.checked) {
+      const label = cb.closest('label.checkbox-item');
+      if (label) label.click();
+    }
+    return !!cb;
+  }
+
+  function pickRadio(name, value) {
+    const radio = document.querySelector(`input[name="${name}"][value="${value}"]`);
+    if (radio && !radio.checked) {
+      const label = radio.closest('label.radio-item');
+      if (label) label.click();
+    }
+    return !!radio;
+  }
+
+  function getChannels() {
+    const result = [];
+    document.querySelectorAll('#f-channels input[type="checkbox"]:checked').forEach(cb => {
+      if (cb.value === '電商') {
+        const platforms = [];
+        document.querySelectorAll('#ec-platforms input[type="checkbox"]:checked').forEach(p => platforms.push(p.value));
+        result.push(platforms.length ? `電商（${platforms.join('、')}）` : '電商');
+      } else if (cb.value === '官網') {
+        const vendor = document.querySelector('input[name="web-vendor"]:checked');
+        result.push(vendor ? `官網（${vendor.value}）` : '官網');
+      } else if (cb.value === '門店') {
+        const count = val('store-count');
+        result.push(count ? `門店（${count} 家）` : '門店');
+      } else if (cb.value === '其他') {
+        const txt = val('channel-other');
+        result.push(txt ? `其他（${txt}）` : '其他');
+      } else {
+        result.push(cb.value);
+      }
+    });
+    return result;
+  }
+
+  function getChecked(groupId) {
+    return Array.from(document.querySelectorAll(`#${groupId} input[type="checkbox"]:checked`)).map(cb => cb.value);
+  }
+
+  function getCurrentSystems() {
+    const result = [];
+    document.querySelectorAll('#f-current-sys input[type="checkbox"]:checked').forEach(cb => {
+      if (cb.value === '其他') {
+        const txt = val('sys-other-text');
+        result.push(txt ? `其他（${txt}）` : '其他');
+      } else {
+        result.push(cb.value);
+      }
+    });
+    return result;
+  }
+
+  function getRadio(name) {
+    const el = document.querySelector(`input[name="${name}"]:checked`);
+    return el ? el.value : '';
+  }
+
+  // ══════════════════════════════════════════
+  //  Progress
+  // ══════════════════════════════════════════
+  function updateProgress() {
+    const d = collectFormData();
+    const checks = [
+      d.salesperson, d.visitDate, d.grade,
+      d.name, d.taxId,
+      d.contact.name, d.contact.phone,
+      d.channels.length > 0,
+      d.capital, d.headcount, d.productType,
+      d.production.length > 0, d.related,
+      d.pain,
+      d.currentSys.length > 0,
+      d.erp.length > 0 || d.erp2.length > 0,
+      d.timeline, d.budget,
+      d.decision.length > 0,
+    ];
+    const count = checks.filter(Boolean).length;
+    document.getElementById('progress-count').textContent = count;
+    document.getElementById('progress-total').textContent = checks.length;
+  }
+
+  // Trigger progress update on any input
+  document.addEventListener('input', e => {
+    if (!e.target.closest('#form-page')) return;
+    updateProgress();
+    if (e.target.id === 'f-sys-weakness') refreshWeaknessHints();
+    if (e.target.id === 'f-sys-improvement') refreshImprovementHints();
+  });
+  document.addEventListener('change', e => {
+    if (e.target.closest('#form-page')) updateProgress();
+  });
+
+  // ══════════════════════════════════════════
+  //  Validation & Submit
+  // ══════════════════════════════════════════
+  function showError(id, show) {
+    const el = document.getElementById(id);
+    if (el) el.style.display = show ? 'block' : 'none';
+  }
+  function markInvalid(id, invalid) {
+    const el = document.getElementById(id);
+    if (el) el.classList.toggle('invalid', invalid);
+  }
+
+  function submitForm() {
+    let valid = true;
+    let firstErrorId = null;
+
+    const d = collectFormData();
+
+    // Required: salesperson
+    const bad_sp = !d.salesperson;
+    showError('err-salesperson', bad_sp); markInvalid('f-salesperson', bad_sp);
+    if (bad_sp) { valid = false; firstErrorId = firstErrorId || 'f-salesperson'; }
+
+    // Required: grade
+    const bad_grade = !d.grade;
+    showError('err-grade', bad_grade);
+    if (bad_grade) { valid = false; firstErrorId = firstErrorId || 'f-grade'; }
+
+    // Required: name
+    const bad_name = !d.name;
+    showError('err-name', bad_name); markInvalid('f-name', bad_name);
+    if (bad_name) { valid = false; firstErrorId = firstErrorId || 'f-name'; }
+
+    // Optional but formatted: tax ID (only if provided)
+    const bad_tax = d.taxId && !/^\d{8}$/.test(d.taxId);
+    showError('err-tax-id', bad_tax); markInvalid('f-tax-id', bad_tax);
+    if (bad_tax) { valid = false; firstErrorId = firstErrorId || 'f-tax-id'; }
+
+    // Optional email
+    const bad_email = d.contact.email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(d.contact.email);
+    showError('err-email', bad_email); markInvalid('f-contact-email', bad_email);
+    if (bad_email) { valid = false; firstErrorId = firstErrorId || 'f-contact-email'; }
+
+    // Required: channels
+    const bad_ch = d.channels.length === 0;
+    showError('err-channels', bad_ch);
+    if (bad_ch) { valid = false; firstErrorId = firstErrorId || 'f-channels'; }
+
+    // Required: pain
+    const bad_pain = !d.pain;
+    showError('err-pain', bad_pain); markInvalid('f-pain', bad_pain);
+    if (bad_pain) { valid = false; firstErrorId = firstErrorId || 'f-pain'; }
+
+    if (!valid) {
+      showToast('請填寫必填欄位（標示 * 者）', 'error');
+      if (firstErrorId) {
+        const el = document.getElementById(firstErrorId);
+        if (el) {
+          el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          if (el.focus) setTimeout(() => el.focus(), 400);
+        }
+      }
+      return;
+    }
+
+    currentData = d;
+    stopDraftTimer();
+    buildConfirm(d);
+    showPage('confirm-page');
+  }
+
+  // ══════════════════════════════════════════
+  //  Confirm page
+  // ══════════════════════════════════════════
+  function buildConfirm(d) {
+    const gradeBadge = d.grade ? `<span class="grade-badge ${d.grade}">${d.grade}</span> ${gradeDescription(d.grade)}` : '—';
+    document.getElementById('confirm-client-name').innerHTML = `客戶資料確認 — ${escHtml(d.name)}`;
+
+    const relatedVal = d.related === '是' && d.relatedDetail
+      ? `是（${d.relatedDetail}）`
+      : (d.related || '—');
+
+    const contactVal = [
+      d.contact.name  ? `姓名：${escHtml(d.contact.name)}`   : '',
+      d.contact.title ? `職稱：${escHtml(d.contact.title)}`  : '',
+      d.contact.phone ? `電話：${escHtml(d.contact.phone)}`  : '',
+      d.contact.email ? `Email：${escHtml(d.contact.email)}` : '',
+    ].filter(Boolean).join('<br>') || '—';
+
+    const rows = [
+      ['SECTION', '📌 業務資訊'],
+      ['業務員',           escHtml(d.salesperson) || '—'],
+      ['拜訪日期',          escHtml(d.visitDate) || '—'],
+      ['下次追蹤日',        escHtml(d.followupDate) || '—'],
+      ['商機等級',          gradeBadge],
+
+      ['SECTION', '🏢 客戶基本外觀資料'],
+      ['客戶名稱',           escHtml(d.name)],
+      ['統一編號',           escHtml(d.taxId) || '—'],
+      ['聯絡人',             contactVal],
+      ['銷售通路',           tagsOrDash(d.channels)],
+      ['資本額',             escHtml(d.capital) || '—'],
+      ['公司人數',           escHtml(d.headcount) || '—'],
+      ['產品類型',           escHtml(d.productType) || '—'],
+      ['生產方式',           tagsOrDash(d.production)],
+      ['關係公司 / 母子公司', escHtml(relatedVal)],
+
+      ['SECTION', '💡 需求與痛點'],
+      ['客戶困擾 / 痛點',    escHtml(d.pain).replace(/\n/g, '<br>')],
+      ['現行系統',           tagsOrDash(d.currentSys)],
+      ['現行系統弱點',        escHtml(d.sysWeakness).replace(/\n/g, '<br>') || '—'],
+      ['改善方向',           escHtml(d.sysImprovement).replace(/\n/g, '<br>') || '—'],
+      ['ERP 需求',           tagsOrDash(d.erp)],
+      ['ERP II 需求',        tagsOrDash(d.erp2)],
+
+      ['SECTION', '🎯 商業判斷'],
+      ['期望導入時間',        escHtml(d.timeline) || '—'],
+      ['預算範圍',           escHtml(d.budget) || '—'],
+      ['決策鏈',             tagsOrDash(d.decision)],
+      ['備註',              escHtml(d.notes).replace(/\n/g, '<br>') || '—'],
+    ];
+
+    const html = rows.map(([label, val]) =>
+      label === 'SECTION'
+        ? `<tr><td colspan="2" class="confirm-section-header">${val}</td></tr>`
+        : `<tr><td>${label}</td><td>${val}</td></tr>`
+    ).join('');
+    document.getElementById('confirm-table').innerHTML = html;
+    renderSolutions(d);
+    updatePrintFooter(d);
+  }
+
+  function updatePrintFooter(d) {
+    const today = new Date().toLocaleDateString('zh-TW');
+    document.getElementById('print-footer-content').innerHTML =
+      `<strong>${escHtml(d.name || '')}</strong>` +
+      ` · 業務員：${escHtml(d.salesperson || '—')}` +
+      ` · 拜訪日：${escHtml(d.visitDate || '—')}` +
+      ` · 列印日期：${today}`;
+  }
+
+  function tagsOrDash(arr) {
+    return arr && arr.length
+      ? arr.map(v => `<span class="tag">${escHtml(v)}</span>`).join(' ')
+      : '—';
+  }
+
+  function gradeDescription(g) {
+    return {
+      'A':  '<span style="color:#718096;font-size:12px;">熱單 · 3個月內成交</span>',
+      'B':  '<span style="color:#718096;font-size:12px;">溫單 · 6個月內推進</span>',
+      'C1': '<span style="color:#718096;font-size:12px;">中溫 · 1年內追蹤</span>',
+      'C2': '<span style="color:#718096;font-size:12px;">冷單 · 需要培育</span>',
+      'D':  '<span style="color:#718096;font-size:12px;">觀察 · 資訊蒐集階段</span>',
+    }[g] || '';
+  }
+
+  // ══════════════════════════════════════════
+  //  Solution recommendation
+  // ══════════════════════════════════════════
+  function recommendSolutions(d) {
+    const map = new Map();
+    function add(name, tier, reason, from) {
+      if (!map.has(name)) map.set(name, { name, tier, reasons: [], from: new Set() });
+      const s = map.get(name);
+      if (!s.reasons.includes(reason)) s.reasons.push(reason);
+      if (from) s.from.add(from);
+      if (tier === 'main') s.tier = 'main';
+    }
+
+    const channels = d.channels || [];
+    const production = d.production || [];
+    const currentSys = d.currentSys || [];
+    const erp = d.erp || [];
+    const erp2 = d.erp2 || [];
+    const pain = d.pain || '';
+    const notes = d.notes || '';
+    const painAll = pain + ' ' + notes + ' ' + (d.sysWeakness || '') + ' ' + (d.sysImprovement || '');
+
+    // ── 主 ERP：依規模決定 T100 vs Cosmos ──
+    const largeScale = /500人以上|301～500人/.test(d.headcount || '') ||
+                       /5億以上|1億～5億|5,000萬～1億/.test(d.capital || '');
+    const smallScale = /10人以下|11～50人/.test(d.headcount || '') || /500萬以下/.test(d.capital || '');
+
+    if (erp.includes('T100')) {
+      add('T100 ERP', 'main', '客戶已明確指定 T100', 'ERP 需求');
+    } else if (erp.includes('Cosmos')) {
+      add('Cosmos ERP', 'main', '客戶已明確指定 Cosmos', 'ERP 需求');
+    } else if (largeScale) {
+      const label = [d.headcount, d.capital].filter(Boolean).join(' / ');
+      add('T100 ERP', 'main', '大型企業規模（' + label + '）適用 T100 企業級版本', '公司規模');
+    } else {
+      add('Cosmos ERP', 'main', smallScale ? '中小型企業標配 Cosmos' : '中型企業適用 Cosmos', '公司規模');
+    }
+    if (erp.includes('Workflow')) {
+      add('Workflow', 'main', '客戶明確指定 Workflow', 'ERP 需求');
+    }
+
+    // ── 銷售通路 ──
+    const hasEC = channels.some(c => c.startsWith('電商'));
+    const hasWeb = channels.some(c => c.startsWith('官網'));
+    const hasStore = channels.some(c => c.startsWith('門店'));
+    const hasWholesale = channels.includes('批發');
+    const multi = channels.length >= 2;
+
+    if (hasEC) {
+      add('DSP 外連服務平台', 'main', '整合電商訂單／庫存自動下拉，減少手動作業', '電商通路');
+    }
+    if (hasEC || hasWeb) {
+      add('91APP OMO', 'sub', 'OMO 全渠道整合方案（線上線下會員同步）', '銷售通路');
+    }
+    if (hasWeb) {
+      add('智匯達人（LINE 整合）', 'sub', '官網結合 LINE 分眾行銷／自動化推播', '官網通路');
+    }
+    if (hasStore) {
+      add('CosmosPOS', 'main', '多門店 POS 收銀 + 會員一體化，門市即時同步', '門店通路');
+    }
+    if (hasWholesale) {
+      add('OM 訂單管理 + INV 庫存', 'sub', '批發業以訂單／庫存週轉為核心', '批發通路');
+    }
+    if (multi) {
+      add('DSP 外連服務平台', 'main', '多通路併存需要統一資料整合', '多通路');
+    }
+
+    // ── 客戶痛點 ──
+    if (/庫存|倉儲|盤點|對不準|串不上|缺料|滯銷/.test(painAll)) {
+      add('高效儲運 / INV 模組', 'main', '客戶痛點：庫存／盤點問題', '客戶痛點');
+      add('PDA', 'sub', '搭配 PDA 條碼盤點提升準確度', '客戶痛點');
+    }
+    if (/人事|薪資|排班|考勤|打卡/.test(painAll)) {
+      add('HR Solution', 'main', '客戶痛點：人事薪資／考勤自動化', '客戶痛點');
+    }
+    if (/流程|審核|簽核|請購|請假|加班/.test(painAll)) {
+      add('Workflow', 'main', '客戶痛點：流程電子化與跨部門簽核', '客戶痛點');
+    }
+    if (/報表|績效|分析|視覺化|看板|dashboard/i.test(painAll)) {
+      add('BI 商業智慧', 'main', '客戶痛點：即時業績報表／經營儀表板', '客戶痛點');
+    }
+    if (/會員|行銷|回購|CRM|客訴|顧客/i.test(painAll)) {
+      add('CRM', 'main', '客戶痛點：會員關係管理與回購經營', '客戶痛點');
+    }
+    if (/ESG|碳盤查|碳排|永續/i.test(painAll)) {
+      add('ESG 方案', 'main', '客戶痛點：ESG 碳盤查／永續報告', '客戶痛點');
+    }
+    if (/AI|智能|自動化|大模型|LLM|chatgpt/i.test(painAll)) {
+      add('AI 一體機 / 地端大模型', 'sub', '客戶痛點：AI 應用嵌入業務流程', '客戶痛點');
+    }
+    if (/訂單.*手動|訂單.*匯入|對帳|串接|整合/.test(painAll)) {
+      add('DSP 外連服務平台', 'main', '客戶痛點：訂單／對帳自動化', '客戶痛點');
+    }
+
+    // ── ERP II 明確勾選 ──
+    const erp2Map = {
+      'CRM': ['CRM 客戶關係管理', 'main'],
+      'HR':  ['HR Solution', 'main'],
+      'DSP': ['DSP 外連服務平台', 'main'],
+      'PDA': ['PDA 條碼盤點', 'main'],
+      'AI':  ['AI 一體機', 'main'],
+      'BI':  ['BI 商業智慧', 'main'],
+    };
+    erp2.forEach(p => {
+      const [n, t] = erp2Map[p] || [];
+      if (n) add(n, t, '客戶明確指定 ' + p, 'ERP II 需求');
+    });
+
+    // ── 生產方式 ──
+    const hasSelfProd = production.includes('自行生產') || production.includes('兩者皆有');
+    const hasOEM = production.includes('委外代工') || production.includes('兩者皆有');
+    if (hasSelfProd) {
+      add('SFC 車間管理', 'sub', '自行生產需要工單／製令追蹤與車間排程', '生產方式');
+    }
+    if (hasOEM) {
+      add('MRP 物料需求規劃', 'sub', '委外代工需要物料需求計算與委外管理', '生產方式');
+    }
+    if (production.includes('純流通（不生產）')) {
+      add('OM 訂單管理 + INV 庫存', 'sub', '純流通業以訂單／庫存為核心模組', '生產方式');
+    }
+
+    // ── 現行系統過渡策略 ──
+    if (currentSys.includes('Excel / 人工') || currentSys.includes('無系統')) {
+      add('ERP 全模組導入', 'main', '現行為 Excel／人工作業，需完整建立系統化管理', '現行系統');
+    }
+    if (currentSys.some(s => s.startsWith('正航') || s === '正航')) {
+      add('資料移轉服務', 'sub', '從正航遷移至鼎新，需資料清洗與帳務對接', '現行系統');
+    }
+    if (currentSys.includes('SAP') || currentSys.includes('Oracle')) {
+      add('系統併行 / 資料整合', 'sub', '與現有 SAP／Oracle 系統併行整合', '現行系統');
+    }
+
+    // 排序：main 優先，其次理由數量
+    return Array.from(map.values()).sort((a, b) => {
+      if (a.tier !== b.tier) return a.tier === 'main' ? -1 : 1;
+      return b.reasons.length - a.reasons.length;
+    });
+  }
+
+  function renderSolutions(d) {
+    const solutions = recommendSolutions(d);
+    const card = document.getElementById('solutions-card');
+    const list = document.getElementById('solutions-list');
+    if (!solutions.length) {
+      card.style.display = 'block';
+      list.innerHTML = `<div class="solution-empty">尚未依此客戶條件比對到明確建議，請補齊需求或痛點欄位。</div>`;
+      return;
+    }
+    list.innerHTML = solutions.map(s => {
+      const tierBadge = s.tier === 'main'
+        ? '<span class="solution-tier-badge main">主推</span>'
+        : '<span class="solution-tier-badge sub">建議</span>';
+      const reasons = s.reasons.map(r => `<li>${escHtml(r)}</li>`).join('');
+      const from = Array.from(s.from).map(f => `<span class="solution-from-tag">${escHtml(f)}</span>`).join('');
+      return `
+        <div class="solution-item tier-${s.tier}">
+          <div class="solution-head">
+            <span class="solution-name">${escHtml(s.name)}</span>
+            ${tierBadge}
+          </div>
+          <ul class="solution-reasons">${reasons}</ul>
+          ${from ? `<div class="solution-from">${from}</div>` : ''}
+        </div>
+      `;
+    }).join('');
+    card.style.display = 'block';
+  }
+
+  // ══════════════════════════════════════════
+  //  Save to list
+  // ══════════════════════════════════════════
+  function saveAndGoList() {
+    if (!currentData) return;
+    const now = new Date().toISOString();
+    const rec = { ...currentData };
+    if (editingId) {
+      const existing = getAllClients()[editingId];
+      rec.id = editingId;
+      rec.createdAt = existing?.createdAt || now;
+      rec.updatedAt = now;
+    } else {
+      rec.id = 'client_' + Date.now();
+      rec.createdAt = now;
+      rec.updatedAt = now;
+    }
+    saveClientRecord(rec);
+    localStorage.removeItem(KEY_DRAFT);
+    editingId = null;
+    currentData = null;
+    showToast('已儲存到客戶列表', 'success');
+    goList();
+  }
+
+  // ══════════════════════════════════════════
+  //  Exports
+  // ══════════════════════════════════════════
+  function downloadJSON() {
+    if (!currentData) return;
+    const rec = enrichForExport(currentData);
+    const filename = `${sanitizeFilename(rec.name)}_${rec.visitDate || 'undated'}.json`;
+    downloadBlob(JSON.stringify(rec, null, 2), filename, 'application/json');
+    showToast('已下載 JSON', 'success');
+  }
+
+  function downloadMarkdown() {
+    if (!currentData) return;
+    const rec = enrichForExport(currentData);
+    const md = generateMarkdown(rec);
+    const filename = `${sanitizeFilename(rec.name)}_${rec.visitDate || 'undated'}.md`;
+    downloadBlob(md, filename, 'text/markdown');
+    showToast('已下載 Markdown', 'success');
+  }
+
+  function copyStructured() {
+    if (!currentData) return;
+    const text = generatePlainText(enrichForExport(currentData));
+    navigator.clipboard.writeText(text).then(
+      () => showToast('已複製到剪貼簿', 'success'),
+      () => showToast('複製失敗，請手動選取', 'error')
+    );
+  }
+
+  function enrichForExport(d) {
+    const recs = recommendSolutions(d);
+    return {
+      ...d,
+      recommendations: recs.map(r => ({
+        product: r.name,
+        tier: r.tier,
+        reasons: r.reasons,
+        from: Array.from(r.from),
+      })),
+      exportedAt: new Date().toISOString(),
+      schemaVersion: 1,
+    };
+  }
+
+  function generateMarkdown(d) {
+    const gradeMap = {
+      'A':  'A（熱單）', 'B':  'B（溫單）', 'C1': 'C1（中溫）',
+      'C2': 'C2（冷追蹤）', 'D':  'D（觀察名單）',
+    };
+    const lines = [];
+    lines.push(`# ${d.name || '客戶資料'}`);
+    lines.push('');
+    lines.push(`> 業務員：${d.salesperson || '—'} · 拜訪日期：${d.visitDate || '—'} · 商機等級：**${gradeMap[d.grade] || '—'}**`);
+    lines.push('');
+
+    lines.push('## 📌 業務資訊');
+    lines.push('');
+    lines.push(`- **業務員**：${d.salesperson || '—'}`);
+    lines.push(`- **拜訪日期**：${d.visitDate || '—'}`);
+    lines.push(`- **下次追蹤日**：${d.followupDate || '—'}`);
+    lines.push(`- **商機等級**：${gradeMap[d.grade] || '—'}`);
+    lines.push('');
+
+    lines.push('## 🏢 客戶基本外觀資料');
+    lines.push('');
+    lines.push(`- **客戶名稱**：${d.name || '—'}`);
+    lines.push(`- **統一編號**：${d.taxId || '—'}`);
+    if (d.contact && (d.contact.name || d.contact.phone || d.contact.email || d.contact.title)) {
+      lines.push(`- **聯絡人**：`);
+      if (d.contact.name)  lines.push(`  - 姓名：${d.contact.name}`);
+      if (d.contact.title) lines.push(`  - 職稱：${d.contact.title}`);
+      if (d.contact.phone) lines.push(`  - 電話：${d.contact.phone}`);
+      if (d.contact.email) lines.push(`  - Email：${d.contact.email}`);
+    } else {
+      lines.push(`- **聯絡人**：—`);
+    }
+    lines.push(`- **銷售通路**：${(d.channels || []).join('、') || '—'}`);
+    lines.push(`- **資本額**：${d.capital || '—'}`);
+    lines.push(`- **公司人數**：${d.headcount || '—'}`);
+    lines.push(`- **產品類型**：${d.productType || '—'}`);
+    lines.push(`- **生產方式**：${(d.production || []).join('、') || '—'}`);
+    const rel = d.related === '是' && d.relatedDetail ? `是（${d.relatedDetail}）` : (d.related || '—');
+    lines.push(`- **關係公司**：${rel}`);
+    lines.push('');
+
+    lines.push('## 💡 需求與痛點');
+    lines.push('');
+    lines.push(`### 客戶困擾 / 痛點`);
+    lines.push('');
+    lines.push(d.pain ? '> ' + d.pain.replace(/\n/g, '\n> ') : '> —');
+    lines.push('');
+    lines.push(`- **現行系統**：${(d.currentSys || []).join('、') || '—'}`);
+    if (d.sysWeakness) {
+      lines.push(`- **現行系統弱點**：`);
+      lines.push('');
+      lines.push('  > ' + d.sysWeakness.replace(/\n/g, '\n  > '));
+    } else {
+      lines.push(`- **現行系統弱點**：—`);
+    }
+    if (d.sysImprovement) {
+      lines.push(`- **改善方向**：`);
+      lines.push('');
+      lines.push('  > ' + d.sysImprovement.replace(/\n/g, '\n  > '));
+    } else {
+      lines.push(`- **改善方向**：—`);
+    }
+    lines.push(`- **ERP 需求**：${(d.erp || []).join('、') || '—'}`);
+    lines.push(`- **ERP II 需求**：${(d.erp2 || []).join('、') || '—'}`);
+    lines.push('');
+
+    lines.push('## 🎯 商業判斷');
+    lines.push('');
+    lines.push(`- **期望導入時間**：${d.timeline || '—'}`);
+    lines.push(`- **預算範圍**：${d.budget || '—'}`);
+    lines.push(`- **決策鏈**：${(d.decision || []).join('、') || '—'}`);
+    if (d.notes) {
+      lines.push(`- **備註**：`);
+      lines.push('');
+      lines.push('  > ' + d.notes.replace(/\n/g, '\n  > '));
+    } else {
+      lines.push(`- **備註**：—`);
+    }
+    lines.push('');
+    lines.push('## 🎁 初步解決方案建議');
+    lines.push('');
+    const recs = recommendSolutions(d);
+    if (recs.length === 0) {
+      lines.push('_（尚未比對到明確建議）_');
+    } else {
+      const mains = recs.filter(r => r.tier === 'main');
+      const subs  = recs.filter(r => r.tier === 'sub');
+      if (mains.length) {
+        lines.push('### 主推方案');
+        lines.push('');
+        mains.forEach(r => {
+          lines.push(`- **${r.name}**`);
+          r.reasons.forEach(reason => lines.push(`  - ${reason}`));
+        });
+        lines.push('');
+      }
+      if (subs.length) {
+        lines.push('### 建議搭配');
+        lines.push('');
+        subs.forEach(r => {
+          lines.push(`- **${r.name}**`);
+          r.reasons.forEach(reason => lines.push(`  - ${reason}`));
+        });
+        lines.push('');
+      }
+    }
+    lines.push('---');
+    lines.push(`*匯出時間：${new Date().toLocaleString('zh-TW')}*`);
+
+    return lines.join('\n');
+  }
+
+  function generatePlainText(d) {
+    const gradeMap = { 'A':'A(熱單)', 'B':'B(溫單)', 'C1':'C1(中溫)', 'C2':'C2(冷追蹤)', 'D':'D(觀察)' };
+    const L = [];
+    L.push(`【客戶需求蒐集】${d.name || ''}`);
+    L.push('─'.repeat(30));
+    L.push(`業務員：${d.salesperson || '—'}`);
+    L.push(`拜訪日：${d.visitDate || '—'}`);
+    L.push(`商機等級：${gradeMap[d.grade] || '—'}`);
+    if (d.taxId) L.push(`統編：${d.taxId}`);
+    if (d.contact && (d.contact.name || d.contact.phone)) {
+      L.push(`聯絡人：${d.contact.name || ''} ${d.contact.title ? '('+d.contact.title+')' : ''} ${d.contact.phone || ''} ${d.contact.email || ''}`.trim());
+    }
+    L.push('');
+    L.push(`【客戶概況】`);
+    L.push(`銷售通路：${(d.channels || []).join('、') || '—'}`);
+    L.push(`資本額：${d.capital || '—'} | 人數：${d.headcount || '—'}`);
+    L.push(`產品類型：${d.productType || '—'}`);
+    L.push(`生產方式：${(d.production || []).join('、') || '—'}`);
+    const rel = d.related === '是' && d.relatedDetail ? `是（${d.relatedDetail}）` : (d.related || '—');
+    L.push(`關係公司：${rel}`);
+    L.push('');
+    L.push(`【痛點】`);
+    L.push(d.pain || '—');
+    L.push('');
+    L.push(`【系統現況與需求】`);
+    L.push(`現行系統：${(d.currentSys || []).join('、') || '—'}`);
+    if (d.sysWeakness)    L.push(`現行系統弱點：${d.sysWeakness}`);
+    if (d.sysImprovement) L.push(`改善方向：${d.sysImprovement}`);
+    L.push(`ERP 需求：${(d.erp || []).join('、') || '—'}`);
+    L.push(`ERP II 需求：${(d.erp2 || []).join('、') || '—'}`);
+    L.push('');
+    L.push(`【商業判斷】`);
+    L.push(`期望導入時間：${d.timeline || '—'}`);
+    L.push(`預算範圍：${d.budget || '—'}`);
+    L.push(`決策鏈：${(d.decision || []).join('、') || '—'}`);
+    if (d.notes) { L.push(''); L.push(`【備註】`); L.push(d.notes); }
+    return L.join('\n');
+  }
+
+  function downloadBlob(content, filename, type) {
+    const blob = new Blob([content], { type: type + ';charset=utf-8' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = filename;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    setTimeout(() => URL.revokeObjectURL(url), 100);
+  }
+
+  function sanitizeFilename(name) {
+    return String(name || 'client').replace(/[\\/:*?"<>|]/g, '_').slice(0, 50);
+  }
+
+  function printPage() { window.print(); }
+
+  // ══════════════════════════════════════════
+  //  List rendering
+  // ══════════════════════════════════════════
+  function renderList() {
+    const all = Object.values(getAllClients());
+    const q = (document.getElementById('search-input').value || '').trim().toLowerCase();
+    const gradeFilter = document.getElementById('filter-grade').value;
+    const sortBy = document.getElementById('sort-by').value;
+
+    let list = all;
+    if (q) {
+      list = list.filter(r =>
+        (r.name || '').toLowerCase().includes(q) ||
+        (r.salesperson || '').toLowerCase().includes(q) ||
+        (r.productType || '').toLowerCase().includes(q) ||
+        (r.contact?.name || '').toLowerCase().includes(q)
+      );
+    }
+    if (gradeFilter) list = list.filter(r => r.grade === gradeFilter);
+
+    const gradeOrder = { 'A':1, 'B':2, 'C1':3, 'C2':4, 'D':5 };
+    if (sortBy === 'updated') list.sort((a,b) => (b.updatedAt || '').localeCompare(a.updatedAt || ''));
+    else if (sortBy === 'visit') list.sort((a,b) => (b.visitDate || '').localeCompare(a.visitDate || ''));
+    else if (sortBy === 'grade') list.sort((a,b) => (gradeOrder[a.grade] || 99) - (gradeOrder[b.grade] || 99));
+    else if (sortBy === 'name') list.sort((a,b) => (a.name || '').localeCompare(b.name || '', 'zh-Hant'));
+
+    const container = document.getElementById('list-container');
+
+    if (all.length === 0) {
+      container.innerHTML = `
+        <div class="empty-state">
+          <div class="emoji">📋</div>
+          <p>目前尚無客戶資料</p>
+          <button class="btn-primary" onclick="goNewForm()">＋ 新增第一筆客戶</button>
+        </div>`;
+      return;
+    }
+
+    if (list.length === 0) {
+      container.innerHTML = `<div class="empty-state"><div class="emoji">🔍</div><p>查無符合條件的客戶</p></div>`;
+      return;
+    }
+
+    const rows = list.map(r => `
+      <tr>
+        <td class="client-name-cell">
+          <div class="client-name" onclick="goEditForm('${r.id}')">${escHtml(r.name || '(無名稱)')}</div>
+          <div class="client-meta">
+            ${r.productType ? escHtml(r.productType) + ' · ' : ''}${escHtml(r.headcount || '')}
+          </div>
+        </td>
+        <td data-label="商機">${r.grade ? `<span class="grade-badge ${r.grade}">${r.grade}</span>` : '—'}</td>
+        <td data-label="業務員">${escHtml(r.salesperson || '—')}</td>
+        <td data-label="拜訪日">${escHtml(r.visitDate || '—')}</td>
+        <td data-label="期望導入">${escHtml(r.timeline || '—')}</td>
+        <td data-label="更新" style="font-size:12px;color:#718096;">${formatUpdatedAt(r.updatedAt)}</td>
+        <td>
+          <div class="row-actions">
+            <button class="btn-mini" onclick="goEditForm('${r.id}')" title="編輯">編輯</button>
+            <button class="btn-mini" onclick="duplicateClient('${r.id}')" title="複製新增">複製</button>
+            <button class="btn-danger" onclick="deleteClient('${r.id}')" title="刪除">刪除</button>
+          </div>
+        </td>
+      </tr>
+    `).join('');
+
+    container.innerHTML = `
+      <div style="overflow-x:auto;">
+        <table class="client-table">
+          <thead>
+            <tr>
+              <th>客戶名稱</th>
+              <th>商機</th>
+              <th>業務員</th>
+              <th>拜訪日</th>
+              <th>期望導入</th>
+              <th>更新時間</th>
+              <th style="text-align:right;">動作</th>
+            </tr>
+          </thead>
+          <tbody>${rows}</tbody>
+        </table>
+      </div>
+      <div style="margin-top:12px;font-size:12px;color:#718096;">
+        共 ${list.length} 筆${list.length !== all.length ? `（總計 ${all.length}）` : ''}
+      </div>
+    `;
+  }
+
+  function formatUpdatedAt(iso) {
+    if (!iso) return '—';
+    const d = new Date(iso);
+    if (isNaN(d)) return '—';
+    return d.toLocaleDateString('zh-TW') + ' ' + d.toLocaleTimeString('zh-TW', { hour: '2-digit', minute: '2-digit' });
+  }
+
+  function deleteClient(id) {
+    const all = getAllClients();
+    const rec = all[id];
+    if (!rec) return;
+    if (!confirm(`確定刪除「${rec.name || '此客戶'}」？此動作無法還原。`)) return;
+    deleteClientRecord(id);
+    renderList();
+    showToast('已刪除', 'success');
+  }
+
+  function duplicateClient(id) {
+    const rec = getAllClients()[id];
+    if (!rec) return;
+    editingId = null;
+    resetForm();
+    // Clone but strip identifiers and dates
+    const clone = { ...rec };
+    delete clone.id; delete clone.createdAt; delete clone.updatedAt;
+    clone.name = (clone.name || '') + '（複製）';
+    populateForm(clone);
+    setDefaultDates();
+    startDraftTimer();
+    showPage('form-page');
+    showToast('已複製為新客戶，記得修改客戶名稱', 'success');
+  }
+
+  // ══════════════════════════════════════════
+  //  Autofill
+  // ══════════════════════════════════════════
+  function toggleAutoFillPanel() {
+    const panel = document.getElementById('af-panel');
+    const arrow = document.getElementById('af-arrow');
+    const isHidden = panel.style.display === 'none';
+    panel.style.display = isHidden ? 'block' : 'none';
+    arrow.textContent = isHidden ? '▲ 收合' : '▼ 展開';
+  }
+
+  function clearAfInput() {
+    document.getElementById('af-input').value = '';
+    document.getElementById('af-result').style.display = 'none';
+  }
+
+  function clearAndRerun() {
+    const text = document.getElementById('af-input').value;
+    resetForm();
+    setDefaultDates();
+    document.getElementById('af-input').value = text;
+    if (text.trim()) {
+      runAutoFill();
+    } else {
+      showToast('已清空表單', 'success');
+    }
+  }
+
+  // ══════════════════════════════════════════
+  //  現行系統弱點 / 改善方向 templates
+  // ══════════════════════════════════════════
+  const WEAKNESS_TEMPLATES = {
+    '無系統':        ['完全依賴人工作業', '無資料追蹤稽核', '缺乏數據分析基礎', '流程仰賴口頭傳遞'],
+    'Excel / 人工':  ['資料分散難維護', '版本混亂常出錯', '無法多人同時協作', '無稽核紀錄', '統計耗時費工'],
+    '正航':          ['電商整合功能弱', '行動裝置支援差', '跨公司帳務難處理', '彈性報表少', 'UI 老舊操作繁複'],
+    'SAP':           ['導入成本高', '客製化困難', '對台灣稅務不友善', '學習曲線陡', '模組間彈性低'],
+    'Oracle':        ['授權成本高', '維運人力需求大', 'UI 老舊', '客製困難'],
+    '其他':          ['系統過舊無支援', '整合能力受限', '維護費用高'],
+  };
+
+  const IMPROVEMENT_TEMPLATES = {
+    'CRM': '會員生命週期管理與回購經營',
+    'HR':  '人事薪資／考勤自動化與行動化',
+    'DSP': '電商訂單自動下拉與對帳整合',
+    'PDA': '條碼盤點與現場作業行動化',
+    'AI':  'AI 助手嵌入業務流程，提升決策效率',
+    'BI':  '即時業績報表與經營儀表板',
+  };
+
+  function refreshWeaknessHints() {
+    const wrap = document.getElementById('weakness-hints-wrap');
+    const container = document.getElementById('weakness-hints');
+    const checked = getChecked('f-current-sys');
+    if (!checked.length) {
+      wrap.style.display = 'none';
+      container.innerHTML = '';
+      return;
+    }
+    const chips = [];
+    const seen = new Set();
+    checked.forEach(sys => {
+      (WEAKNESS_TEMPLATES[sys] || []).forEach(hint => {
+        if (seen.has(hint)) return;
+        seen.add(hint);
+        chips.push(hint);
+      });
+    });
+    if (!chips.length) { wrap.style.display = 'none'; return; }
+    const current = document.getElementById('f-sys-weakness').value;
+    container.innerHTML = chips.map(h => {
+      const used = current.includes(h);
+      return `<button type="button" class="hint-chip${used ? ' used' : ''}" onclick="appendWeakness('${escAttr(h)}')">${used ? '✓ ' : '+ '}${escHtml(h)}</button>`;
+    }).join('');
+    wrap.style.display = 'block';
+  }
+
+  function refreshImprovementHints() {
+    const wrap = document.getElementById('improvement-hints-wrap');
+    const container = document.getElementById('improvement-hints');
+    const erp2 = getChecked('f-erp2');
+    if (!erp2.length) {
+      wrap.style.display = 'none';
+      container.innerHTML = '';
+      return;
+    }
+    const chips = [];
+    const seen = new Set();
+    erp2.forEach(p => {
+      const hint = IMPROVEMENT_TEMPLATES[p];
+      if (hint && !seen.has(hint)) { seen.add(hint); chips.push(hint); }
+    });
+    if (!chips.length) { wrap.style.display = 'none'; return; }
+    const current = document.getElementById('f-sys-improvement').value;
+    container.innerHTML = chips.map(h => {
+      const used = current.includes(h);
+      return `<button type="button" class="hint-chip${used ? ' used' : ''}" onclick="appendImprovement('${escAttr(h)}')">${used ? '✓ ' : '+ '}${escHtml(h)}</button>`;
+    }).join('');
+    wrap.style.display = 'block';
+  }
+
+  function appendWeakness(text) {
+    const el = document.getElementById('f-sys-weakness');
+    const cur = el.value.trim();
+    if (cur.includes(text)) return;
+    el.value = cur ? cur + '、' + text : text;
+    refreshWeaknessHints();
+    updateProgress();
+  }
+
+  function appendImprovement(text) {
+    const el = document.getElementById('f-sys-improvement');
+    const cur = el.value.trim();
+    if (cur.includes(text)) return;
+    el.value = cur ? cur + '、' + text : text;
+    refreshImprovementHints();
+    updateProgress();
+  }
+
+  function escAttr(str) {
+    return String(str).replace(/'/g, "\\'").replace(/"/g, '&quot;');
+  }
+
+  function flashField(elemId) {
+    const el = document.getElementById(elemId);
+    if (!el) return;
+    const field = el.closest('.field');
+    if (!field) return;
+    field.classList.remove('flash-fill');
+    void field.offsetWidth; // force reflow
+    field.classList.add('flash-fill');
+    setTimeout(() => field.classList.remove('flash-fill'), 1900);
+  }
+
+  function runAutoFill() {
+    const text = document.getElementById('af-input').value.trim();
+    if (!text) { showToast('請先輸入文字', 'error'); return; }
+    const filled = [];
+
+    // 客戶名稱
+    let nameVal = '';
+    nameVal = (text.match(/(?:客戶|公司)(?:名稱)?\s*[：:]\s*([^\n,，。、|｜]{2,30})/) || [])[1] || '';
+    if (!nameVal)
+      nameVal = (text.match(/(?:拜訪|拜見|洽談|電訪|訪問|拜會|接洽|聯絡)\s*([^，,。！\n]{2,20}?(?:股份有限公司|有限公司|集團|企業|公司))/) || [])[1] || '';
+    if (!nameVal)
+      nameVal = (text.match(/([^，,。！\n\s]{2,12}(?:股份有限公司|有限公司))/) || [])[1] || '';
+    if (!nameVal)
+      nameVal = (text.match(/([^，,。！\n\s]{2,8}(?:企業|集團|工業|實業|科技|商行|行號|食品|服飾|百貨|電子))/) || [])[1] || '';
+    if (!nameVal) {
+      const first = text.split(/[，,。！\n|｜]/)[0].trim();
+      if (first.length >= 2 && first.length <= 20 && !/^(?:今天|昨天|明天|上午|下午|剛|先|後|去|來|打|撥|關於|有關|針對)/.test(first))
+        nameVal = first;
+    }
+    if (nameVal) {
+      document.getElementById('f-name').value = nameVal.trim();
+      document.getElementById('f-name').classList.remove('invalid');
+      filled.push('客戶名稱'); flashField('f-name');
+    }
+
+    // 統編
+    const taxM = text.match(/(?:統編|統一編號|GUI|VAT)\s*[：:]?\s*(\d{8})/i) || text.match(/(?<!\d)(\d{8})(?!\d)/);
+    if (taxM) { document.getElementById('f-tax-id').value = taxM[1]; filled.push('統一編號'); flashField('f-tax-id'); }
+
+    // 聯絡人姓名（陳經理/林先生等）
+    const contactM = text.match(/(?:聯絡人|對口|窗口)\s*[：:]?\s*([^\s，,。\n]{2,10})/) ||
+                     text.match(/([^\s，,。\n]{1,4}(?:經理|總經理|副總|主任|課長|組長|副理|協理|總監|工程師|老闆|董事長|執行長|CEO|CFO|CTO))/);
+    if (contactM) { document.getElementById('f-contact-name').value = contactM[1]; filled.push('聯絡人姓名'); flashField('f-contact-name'); }
+
+    // 電話
+    const phoneM = text.match(/((?:\+886|0)[\d\-\s]{8,15})/);
+    if (phoneM) { document.getElementById('f-contact-phone').value = phoneM[1].trim(); filled.push('電話'); flashField('f-contact-phone'); }
+
+    // Email
+    const emailM = text.match(/([\w.+-]+@[\w.-]+\.[a-zA-Z]{2,})/);
+    if (emailM) { document.getElementById('f-contact-email').value = emailM[1]; filled.push('Email'); flashField('f-contact-email'); }
+
+    // 銷售通路
+    let chFilled = false;
+    if (/電商|網購|線上銷售/i.test(text))        { checkItem('#f-channels','電商'); chFilled = true; }
+    if (/官網|官方網站|自有網站/i.test(text))     { checkItem('#f-channels','官網'); chFilled = true; }
+    if (/批發|wholesale|代理商/i.test(text))       { checkItem('#f-channels','批發'); chFilled = true; }
+    if (/門店|門市|實體店|分店|直營/i.test(text))  { checkItem('#f-channels','門店'); chFilled = true; }
+    if (chFilled) { filled.push('銷售通路'); flashField('f-channels'); }
+
+    const storeM = text.match(/(\d+)\s*(?:家|間)\s*(?:門店|門市|分店|店|直營)/);
+    if (storeM) document.getElementById('store-count').value = storeM[1];
+
+    if (/shopee|蝦皮/i.test(text))  checkItem('#ec-platforms','SHOPEE');
+    if (/pchome/i.test(text))        checkItem('#ec-platforms','PCHOME');
+    if (/\bmomo\b/i.test(text))      checkItem('#ec-platforms','MOMO');
+    if (/\byahoo\b/i.test(text))     checkItem('#ec-platforms','YAHOO');
+
+    if (/shopline/i.test(text))  pickRadio('web-vendor','SHOPLINE');
+    if (/cyberbiz/i.test(text))  pickRadio('web-vendor','CYBERBIZ');
+    if (/91app/i.test(text))     pickRadio('web-vendor','91APP');
+    if (/shopify/i.test(text))   pickRadio('web-vendor','SHOPIFY');
+
+    // 資本額
+    const capM = text.match(/資本[額]?\s*[：:]?\s*(?:約|大概)?\s*([\d,]+)\s*(萬|億)/);
+    if (capM) {
+      const num = parseInt(capM[1].replace(/,/g, ''));
+      const unit = capM[2];
+      let n = unit === '億' ? num * 10000 : num;
+      const capSel = document.getElementById('f-capital');
+      if      (n < 500)     capSel.value = '500萬以下';
+      else if (n < 1000)    capSel.value = '500萬～1,000萬';
+      else if (n < 5000)    capSel.value = '1,000萬～5,000萬';
+      else if (n < 10000)   capSel.value = '5,000萬～1億';
+      else if (n < 50000)   capSel.value = '1億～5億';
+      else                  capSel.value = '5億以上';
+      filled.push('資本額'); flashField('f-capital');
+    }
+
+    // 公司人數
+    const hcM = text.match(/(?:員工|人數|人力)[約]?\s*[：:]?\s*(\d+)/) ||
+                text.match(/約?\s*(\d+)\s*(?:名|位|個)?(?:員工|人)/);
+    if (hcM) {
+      const n = parseInt(hcM[1]);
+      const sel = document.getElementById('f-headcount');
+      if      (n <= 10)  sel.value = '10人以下';
+      else if (n <= 50)  sel.value = '11～50人';
+      else if (n <= 100) sel.value = '51～100人';
+      else if (n <= 300) sel.value = '101～300人';
+      else if (n <= 500) sel.value = '301～500人';
+      else               sel.value = '500人以上';
+      filled.push('公司人數'); flashField('f-headcount');
+    }
+
+    // 產品類型
+    const prodTypeM = text.match(/(?:產品|商品)[類型種類]?\s*[：:]\s*([^\n,，。]+)/);
+    if (prodTypeM) {
+      document.getElementById('f-product-type').value = prodTypeM[1].trim();
+      filled.push('產品類型'); flashField('f-product-type');
+    } else {
+      // 常見產業別辨識
+      const industryMap = [
+        [/服飾|服裝|成衣/, '服飾'],
+        [/食品|飲料|餐飲/, '食品'],
+        [/3C|電子|電腦|手機/, '3C 電子'],
+        [/美妝|保養|化妝品/, '美妝保養'],
+        [/機械|工具機|設備/, '機械設備'],
+        [/汽車|車輛/, '汽車零件'],
+        [/建材|營造/, '建材營造'],
+        [/化工|化學/, '化工'],
+      ];
+      for (const [re, val] of industryMap) {
+        if (re.test(text)) {
+          document.getElementById('f-product-type').value = val;
+          filled.push('產品類型'); flashField('f-product-type');
+          break;
+        }
+      }
+    }
+
+    // 生產方式
+    let pFilled = false;
+    if (/兩者皆有|自製.*代工|代工.*自製|部分自製/i.test(text)) { checkItem('#f-production','兩者皆有'); pFilled = true; }
+    else {
+      if (/自行生產|自製|自己生產/i.test(text))   { checkItem('#f-production','自行生產'); pFilled = true; }
+      if (/委外代工|外包|代工廠|\bOEM\b/i.test(text)) { checkItem('#f-production','委外代工'); pFilled = true; }
+    }
+    if (/純流通|貿易商|不生產|只販售/i.test(text)) { checkItem('#f-production','純流通（不生產）'); pFilled = true; }
+    if (pFilled) { filled.push('生產方式'); flashField('f-production'); }
+
+    // 關係公司
+    const relatedM = text.match(/(?:母公司|子公司|關係企業|關係公司|集團旗下)\s*[：:]?\s*([^\n，,。]{2,20})/);
+    if (relatedM || /母公司|子公司|關係企業|關係公司|集團旗下/i.test(text)) {
+      pickRadio('related','是');
+      if (relatedM && relatedM[1]) {
+        document.getElementById('f-related-detail').value = relatedM[1].trim();
+      }
+      filled.push('關係公司'); flashField('f-related');
+    }
+
+    // 客戶困擾
+    const painLines = text.split(/[。！\n，,、]/)
+      .filter(s => /困擾|問題|麻煩|痛點|難|無法|不準|不對|手動|耗時|效率|很慢|錯誤|混亂|對不|串不|整合/.test(s) && s.trim().length > 4)
+      .map(s => s.trim()).join('、');
+    if (painLines) {
+      document.getElementById('f-pain').value = painLines;
+      document.getElementById('f-pain').classList.remove('invalid');
+      filled.push('客戶困擾'); flashField('f-pain');
+    }
+
+    // 現行系統
+    let sysFilled = false;
+    if (/無系統|沒有系統|尚無/i.test(text))      { checkItem('#f-current-sys','無系統'); sysFilled = true; }
+    if (/\bexcel\b|試算表/i.test(text))            { checkItem('#f-current-sys','Excel / 人工'); sysFilled = true; }
+    if (/正航/.test(text))                         { checkItem('#f-current-sys','正航'); sysFilled = true; }
+    if (/\bsap\b/i.test(text))                     { checkItem('#f-current-sys','SAP'); sysFilled = true; }
+    if (/\boracle\b/i.test(text))                  { checkItem('#f-current-sys','Oracle'); sysFilled = true; }
+    if (sysFilled) { filled.push('現行系統'); flashField('f-current-sys'); }
+
+    // ERP 需求
+    let erpFilled = false;
+    if (/\bT100\b/i.test(text))   { checkItem('#f-erp','T100'); erpFilled = true; }
+    if (/\bcosmos\b/i.test(text)) { checkItem('#f-erp','Cosmos'); erpFilled = true; }
+    if (/workflow|easyflow/i.test(text))   { checkItem('#f-erp','Workflow'); erpFilled = true; }
+    if (erpFilled) { filled.push('ERP需求'); flashField('f-erp'); }
+
+    // ERP II 需求
+    let erp2Filled = false;
+    ['CRM','HR','DSP','PDA','AI','BI'].forEach(p => {
+      if (new RegExp(`\\b${p}\\b`,'i').test(text)) { checkItem('#f-erp2', p); erp2Filled = true; }
+    });
+    if (erp2Filled) { filled.push('ERP II需求'); flashField('f-erp2'); }
+
+    // 期望導入時間
+    const tlMap = [
+      [/六個月|6\s*個月|半年/i,           '6個月內'],
+      [/三個月|3\s*個月|一季/i,            '3個月內'],
+      [/一個月|1\s*個月|月內/i,            '1個月內'],
+      [/一年以上|超過一年|長期/i,          '1年以上'],
+      [/一年|12\s*個月|年底|年初/i,        '半年～1年'],
+      [/尚未|不確定|待評估|未定|再看看/i,  '尚未確定'],
+    ];
+    for (const [re, val] of tlMap) {
+      if (re.test(text)) { document.getElementById('f-timeline').value = val; filled.push('期望導入時間'); flashField('f-timeline'); break; }
+    }
+
+    // 商機等級（依語氣）
+    if (!getRadio('grade')) {
+      if (/急|馬上|盡快|下個月|下季|一定要導|已決定|準備採購/i.test(text)) { selectGrade('A'); filled.push('商機等級'); flashField('f-grade'); }
+      else if (/半年|預算已有|評估中|比較中|對比/i.test(text))         { selectGrade('B'); filled.push('商機等級'); flashField('f-grade'); }
+      else if (/明年|下半年|一年內/i.test(text))                     { selectGrade('C1'); filled.push('商機等級'); flashField('f-grade'); }
+      else if (/觀望|還在看|再看看|不急/i.test(text))                  { selectGrade('D'); filled.push('商機等級'); flashField('f-grade'); }
+    }
+
+    // 預算
+    const budM = text.match(/預算\s*[：:]?\s*(?:約|大概)?\s*([\d,]+)\s*(萬|億)/);
+    if (budM) {
+      const num = parseInt(budM[1].replace(/,/g, ''));
+      const n = budM[2] === '億' ? num * 10000 : num;
+      const bud = document.getElementById('f-budget');
+      if      (n < 50)    bud.value = '50萬以下';
+      else if (n < 200)   bud.value = '50~200萬';
+      else if (n < 500)   bud.value = '200~500萬';
+      else if (n < 1000)  bud.value = '500~1,000萬';
+      else                bud.value = '1,000萬以上';
+      filled.push('預算範圍'); flashField('f-budget');
+    }
+
+    updateProgress();
+
+    // 結果提示
+    const resultDiv = document.getElementById('af-result');
+    if (filled.length > 0) {
+      resultDiv.innerHTML = `<div style="background:#f0fff4;border:1px solid #9ae6b4;border-radius:8px;padding:12px 16px;font-size:13px;color:#276749;">
+        ✅ 已辨識填入：<strong>${filled.join('、')}</strong>。請向下確認各欄位並補充未辨識項目。
+      </div>`;
+      setTimeout(() => {
+        const salespersonCard = document.querySelector('#form-page .card:nth-child(3)');
+        if (salespersonCard) salespersonCard.scrollIntoView({ behavior: 'smooth' });
+      }, 200);
+    } else {
+      resultDiv.innerHTML = `<div style="background:#fff5f5;border:1px solid #fed7d7;border-radius:8px;padding:12px 16px;font-size:13px;color:#c53030;">
+        ⚠️ 未辨識到明確資訊，請嘗試加入更多關鍵字，例如公司名稱、通路類型、系統名稱、人數等。
+      </div>`;
+    }
+    resultDiv.style.display = 'block';
+  }
+
+  // ══════════════════════════════════════════
+  //  Utilities
+  // ══════════════════════════════════════════
+  function escHtml(str) {
+    return String(str == null ? '' : str)
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;');
+  }
+
+  function showToast(msg, type) {
+    const t = document.getElementById('toast');
+    t.textContent = msg;
+    t.className = 'toast show' + (type ? ' ' + type : '');
+    setTimeout(() => t.classList.remove('show'), 2800);
+  }
+</script>
+
+</body>
+</html>
