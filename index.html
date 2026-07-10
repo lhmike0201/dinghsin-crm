@@ -1127,6 +1127,7 @@
           <button class="btn-mini" onclick="downloadMarkdown()" title="供第三階段簡報生成使用">⬇️ Markdown</button>
           <button class="btn-mini" onclick="copyStructured()" title="複製給主管/同事">📋 複製</button>
           <button class="btn-mini" onclick="printPage()">🖨️ 列印</button>
+          <button class="btn-mini" onclick="openSlides()" title="產生初訪簡報" style="background:#003366;color:white;border-color:#003366;">🎯 生成初訪簡報</button>
           <button class="btn-primary" onclick="saveAndGoList()" style="padding:10px 22px;font-size:14px;">💾 儲存到列表</button>
         </div>
       </div>
@@ -2145,6 +2146,23 @@
   function printPage() { window.print(); }
 
   // ══════════════════════════════════════════
+  //  Slides / Presentation
+  // ══════════════════════════════════════════
+  function openSlides() {
+    if (!currentData) { showToast('無資料可產生簡報', 'error'); return; }
+    // Save as preview so slides.html can read even if this client isn't saved yet
+    const previewId = editingId || 'preview_' + Date.now();
+    const all = getAllClients();
+    all[previewId] = { ...currentData, id: previewId };
+    localStorage.setItem(KEY_CLIENTS, JSON.stringify(all));
+    window.open('slides.html?id=' + encodeURIComponent(previewId), '_blank');
+  }
+
+  function openSlidesById(id) {
+    window.open('slides.html?id=' + encodeURIComponent(id), '_blank');
+  }
+
+  // ══════════════════════════════════════════
   //  List rendering
   // ══════════════════════════════════════════
   function renderList() {
@@ -2202,6 +2220,7 @@
         <td data-label="更新" style="font-size:12px;color:#718096;">${formatUpdatedAt(r.updatedAt)}</td>
         <td>
           <div class="row-actions">
+            <button class="btn-mini" onclick="openSlidesById('${r.id}')" title="產生初訪簡報">🎯 簡報</button>
             <button class="btn-mini" onclick="goEditForm('${r.id}')" title="編輯">編輯</button>
             <button class="btn-mini" onclick="duplicateClient('${r.id}')" title="複製新增">複製</button>
             <button class="btn-danger" onclick="deleteClient('${r.id}')" title="刪除">刪除</button>
