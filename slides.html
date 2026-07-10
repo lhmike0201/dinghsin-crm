@@ -8,43 +8,48 @@
     * { box-sizing: border-box; margin: 0; padding: 0; }
 
     :root {
-      --dinghsin-navy: #015E85;   /* 深藍：白底標題用（對比夠） */
-      --dinghsin-blue: #01AFF0;   /* 主題色 RGB(1,175,240) */
-      --dinghsin-cyan: #7DD3F7;   /* 淺輔色 */
-      --primary-soft: #E1F5FE;    /* 極淺底 */
-      --ink: #1a202c;
-      --muted: #718096;
-      --bg-soft: #f7fafc;
-      --line: #e2e8f0;
-      --accent: #dd6b20;
+      --primary:     #01AFF0;   /* 主題色 RGB(1,175,240) */
+      --primary-dk:  #017BAE;   /* 深主題色（對比） */
+      --navy:        #0A2540;   /* 深藍：標題與深底 */
+      --navy-2:      #001B3B;
+      --ink:         #1a202c;
+      --ink-2:       #4a5568;
+      --muted:       #718096;
+      --soft:        #E8F4FA;   /* 淺主題底 */
+      --soft-2:      #F0F7FB;
+      --line:        #e2e8f0;
+      --line-2:      #cbd5e0;
+      --accent:      #F6A623;   /* 金橘輔色 */
+      --bg:          #F8FBFC;
     }
 
-    body {
-      font-family: 'Microsoft JhengHei', 'PingFang TC', 'Segoe UI', sans-serif;
-      background: #1a202c;
+    html, body {
+      font-family: 'Microsoft JhengHei', 'PingFang TC', 'Segoe UI', system-ui, sans-serif;
+      background: #111827;
       color: var(--ink);
       overflow: hidden;
       min-height: 100vh;
     }
 
-    /* ─── Slide viewport (16:9) ─── */
+    /* ─── Stage (16:9) ─── */
     .stage {
       position: fixed;
       inset: 0;
       display: flex;
       align-items: center;
       justify-content: center;
+      padding: 20px;
     }
 
     .slide {
       background: white;
-      width: min(96vw, calc(96vh * 16 / 9));
+      width: min(96vw, calc(94vh * 16 / 9));
       aspect-ratio: 16 / 9;
-      box-shadow: 0 20px 60px rgba(0,0,0,0.4);
+      box-shadow: 0 25px 70px rgba(0,0,0,0.35);
       overflow: hidden;
       position: relative;
       display: none;
-      padding: 5% 6%;
+      border-radius: 4px;
     }
     .slide.active { display: flex; flex-direction: column; }
 
@@ -53,21 +58,22 @@
       position: fixed;
       top: 50%;
       transform: translateY(-50%);
-      background: rgba(255,255,255,0.1);
+      background: rgba(255,255,255,0.08);
       color: white;
       border: none;
-      width: 46px;
-      height: 46px;
+      width: 44px;
+      height: 44px;
       border-radius: 50%;
       cursor: pointer;
-      font-size: 20px;
+      font-size: 18px;
       transition: background 0.15s;
       z-index: 10;
+      backdrop-filter: blur(6px);
     }
-    .nav-btn:hover { background: rgba(255,255,255,0.25); }
-    .nav-btn:disabled { opacity: 0.3; cursor: default; }
-    .nav-prev { left: 24px; }
-    .nav-next { right: 24px; }
+    .nav-btn:hover { background: rgba(255,255,255,0.2); }
+    .nav-btn:disabled { opacity: 0.25; cursor: default; }
+    .nav-prev { left: 20px; }
+    .nav-next { right: 20px; }
 
     .top-bar {
       position: fixed;
@@ -75,39 +81,40 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
-      padding: 12px 24px;
+      padding: 12px 20px;
       color: white;
       z-index: 10;
       font-size: 13px;
     }
-    .top-bar .brand { font-weight: 700; letter-spacing: 2px; }
-    .top-bar .actions { display: flex; gap: 8px; }
+    .top-bar .brand { font-weight: 800; letter-spacing: 3px; opacity: 0.85; }
+    .top-bar .actions { display: flex; gap: 6px; }
     .icon-btn {
-      background: rgba(255,255,255,0.1);
+      background: rgba(255,255,255,0.08);
       color: white;
-      border: 1px solid rgba(255,255,255,0.25);
+      border: 1px solid rgba(255,255,255,0.2);
       border-radius: 6px;
-      padding: 6px 14px;
-      font-size: 12px;
+      padding: 6px 12px;
+      font-size: 11px;
       font-weight: 600;
       cursor: pointer;
       font-family: inherit;
       transition: background 0.15s;
+      backdrop-filter: blur(6px);
     }
-    .icon-btn:hover { background: rgba(255,255,255,0.22); }
+    .icon-btn:hover { background: rgba(255,255,255,0.2); }
 
     .dots {
       position: fixed;
-      bottom: 20px;
+      bottom: 18px;
       left: 50%;
       transform: translateX(-50%);
       display: flex;
-      gap: 8px;
+      gap: 6px;
       z-index: 10;
     }
     .dot {
-      width: 8px;
-      height: 8px;
+      width: 7px;
+      height: 7px;
       border-radius: 50%;
       background: rgba(255,255,255,0.3);
       cursor: pointer;
@@ -115,327 +122,727 @@
     }
     .dot.active { background: white; width: 24px; border-radius: 4px; }
 
+    /* ─── Corner brand mark (bottom-right on light slides) ─── */
+    .brand-mark {
+      position: absolute;
+      bottom: 16px;
+      right: 20px;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      font-size: 10px;
+      color: var(--muted);
+      font-weight: 600;
+      letter-spacing: 0.5px;
+    }
+    .brand-mark::before {
+      content: '';
+      width: 12px;
+      height: 12px;
+      background: var(--primary);
+      border-radius: 3px;
+      -webkit-mask: radial-gradient(circle at 30% 30%, #000 25%, transparent 26%);
+              mask: radial-gradient(circle at 30% 30%, #000 25%, transparent 26%);
+    }
+    .brand-mark.on-dark { color: rgba(255,255,255,0.55); }
+
     .slide-num {
       position: absolute;
-      bottom: 24px;
-      right: 32px;
-      font-size: 11px;
+      bottom: 16px;
+      left: 20px;
+      font-size: 10px;
       color: var(--muted);
-      letter-spacing: 1px;
+      letter-spacing: 1.5px;
+      font-weight: 600;
     }
+    .slide-num.on-dark { color: rgba(255,255,255,0.4); }
 
-    /* ─── Slide inner shared ─── */
-    .slide h1 {
-      font-size: 42px;
-      color: var(--dinghsin-navy);
-      font-weight: 800;
-      letter-spacing: 1px;
-      line-height: 1.25;
-      margin-bottom: 8px;
-    }
-    .slide h2 {
-      font-size: 32px;
-      color: var(--dinghsin-navy);
-      font-weight: 800;
-      letter-spacing: 0.5px;
-      line-height: 1.3;
-      margin-bottom: 16px;
-    }
-    .slide h3 {
-      font-size: 18px;
-      color: var(--dinghsin-blue);
-      font-weight: 700;
-      letter-spacing: 0.5px;
-      margin-bottom: 8px;
-    }
-    .slide p, .slide li { font-size: 16px; line-height: 1.7; color: var(--ink); }
-    .slide .subtitle {
-      font-size: 20px;
-      color: var(--muted);
-      font-weight: 400;
-      margin-bottom: 24px;
-    }
-    .slide .section-tag {
-      display: inline-block;
-      background: var(--bg-soft);
-      color: var(--dinghsin-blue);
-      font-size: 12px;
-      font-weight: 700;
-      padding: 4px 12px;
-      border-radius: 16px;
-      letter-spacing: 2px;
-      margin-bottom: 12px;
-    }
-
-    /* ─── Slide 1: Cover ─── */
+    /* ═══════════════════════════════════════════
+       Slide 1: Cover (blue block left + content right)
+    ═══════════════════════════════════════════ */
     .cover-slide {
-      background: linear-gradient(135deg, #01587A 0%, #01AFF0 100%);
-      color: white;
-      justify-content: center;
-      align-items: flex-start;
-      padding: 8% 8%;
+      flex-direction: row;
+      background: white;
+      padding: 0;
     }
-    .cover-slide h1 { color: white; font-size: 60px; line-height: 1.15; margin-bottom: 20px; }
-    .cover-slide .subtitle { color: rgba(255,255,255,0.85); font-size: 24px; }
-    .cover-slide .cover-meta {
-      margin-top: auto;
+    .cover-slide .cover-block {
+      width: 30%;
+      background: var(--primary);
       display: flex;
-      gap: 40px;
-      font-size: 15px;
-      color: rgba(255,255,255,0.9);
+      flex-direction: column;
+      justify-content: flex-end;
+      padding: 40px 30px;
+      color: white;
+      position: relative;
     }
-    .cover-slide .cover-meta strong { color: white; letter-spacing: 2px; font-weight: 700; }
-    .cover-slide .dinghsin-logo {
+    .cover-slide .cover-block::after {
+      content: '';
       position: absolute;
-      top: 32px;
-      right: 40px;
-      font-size: 28px;
+      inset: 20% 20% auto 20%;
+      height: 40%;
+      background:
+        radial-gradient(circle at 20% 20%, rgba(255,255,255,0.15) 2px, transparent 3px),
+        radial-gradient(circle at 60% 60%, rgba(255,255,255,0.12) 2px, transparent 3px);
+      background-size: 20px 20px;
+      opacity: 0.4;
+    }
+    .cover-block .block-brand {
+      font-size: 20px;
       font-weight: 900;
       letter-spacing: 4px;
-      opacity: 0.9;
+      margin-bottom: auto;
     }
-    .cover-slide .grade-tag {
+    .cover-block .block-tag {
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 2px;
+      opacity: 0.85;
+      margin-bottom: 8px;
+      text-transform: uppercase;
+    }
+    .cover-slide .cover-content {
+      flex: 1;
+      padding: 60px 60px 40px;
+      display: flex;
+      flex-direction: column;
+    }
+    .cover-content .top-tag {
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 4px;
+      color: var(--navy);
+      margin-bottom: auto;
+      text-transform: uppercase;
+    }
+    .cover-content h1 {
+      font-size: 46px;
+      font-weight: 900;
+      letter-spacing: 1px;
+      color: var(--navy);
+      line-height: 1.2;
+      margin-bottom: 14px;
+    }
+    .cover-content .h1-en {
+      color: var(--primary);
+      font-size: 42px;
+      font-weight: 800;
+      margin-left: 10px;
+    }
+    .cover-content .subtitle {
+      font-size: 22px;
+      color: var(--ink-2);
+      line-height: 1.4;
+      font-weight: 400;
+      max-width: 90%;
+    }
+    .cover-content .subtitle .en {
+      color: var(--muted);
+      font-size: 20px;
+    }
+    .cover-content .cover-tagline {
+      margin-top: 40px;
+      font-size: 13px;
+      color: var(--muted);
+      line-height: 1.7;
+      max-width: 90%;
+      padding-top: 24px;
+      border-top: 1px solid var(--line);
+    }
+    .cover-content .grade-badge {
       display: inline-flex;
       align-items: center;
-      gap: 8px;
-      background: rgba(255,255,255,0.15);
-      border: 1px solid rgba(255,255,255,0.3);
+      gap: 6px;
+      padding: 4px 12px;
+      background: var(--soft);
       border-radius: 20px;
-      padding: 4px 14px;
-      font-size: 13px;
+      font-size: 11px;
       font-weight: 700;
-      margin-bottom: 20px;
+      color: var(--primary-dk);
+      letter-spacing: 1px;
+      margin-top: 14px;
+      align-self: flex-start;
     }
-    .cover-slide .cover-tagline {
-      margin-top: 32px;
-      font-size: 18px;
-      color: rgba(255,255,255,0.9);
-      line-height: 1.6;
-      max-width: 80%;
+    .cover-content .grade-badge::before {
+      content: '';
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--primary);
     }
 
-    /* ─── Slide 2: 鼎新簡介 + 類似案例 ─── */
-    .intro-slide { flex-direction: column; }
-    .intro-slide .intro-body {
+    /* ═══════════════════════════════════════════
+       Shared slide inner (light)
+    ═══════════════════════════════════════════ */
+    .content-slide {
+      padding: 5% 6% 6%;
+      background: white;
+    }
+    .content-slide.softbg { background: linear-gradient(180deg, white 0%, var(--soft-2) 100%); }
+
+    .slide h2 {
+      font-size: 30px;
+      font-weight: 900;
+      color: var(--navy);
+      line-height: 1.25;
+      letter-spacing: 0.5px;
+    }
+    .slide h2 .en { color: var(--primary-dk); font-size: 26px; font-weight: 800; }
+    .slide h2 .highlight { color: var(--primary); }
+
+    .slide .subline {
+      font-size: 14px;
+      color: var(--muted);
+      margin-top: 6px;
+      margin-bottom: 24px;
+      font-weight: 500;
+    }
+
+    /* ═══════════════════════════════════════════
+       Slide 2: Business Overview (KPI cards)
+    ═══════════════════════════════════════════ */
+    .biz-slide { flex-direction: column; }
+    .biz-hero {
+      background: var(--soft);
+      border-radius: 14px;
+      padding: 20px 26px;
+      display: flex;
+      gap: 20px;
+      align-items: flex-start;
+      margin-bottom: 20px;
+    }
+    .biz-hero .icon {
+      width: 48px;
+      height: 48px;
+      background: white;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 24px;
+      flex-shrink: 0;
+    }
+    .biz-hero .body h3 {
+      font-size: 18px;
+      color: var(--navy);
+      font-weight: 800;
+      margin-bottom: 4px;
+    }
+    .biz-hero .body p {
+      font-size: 13px;
+      color: var(--ink-2);
+      line-height: 1.6;
+    }
+
+    .kpi-grid {
       display: grid;
-      grid-template-columns: 1fr 1.6fr;
-      gap: 40px;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 14px;
       flex: 1;
       min-height: 0;
     }
-    .intro-slide .about-panel {
-      background: linear-gradient(180deg, #01587A 0%, #01AFF0 100%);
-      color: white;
-      border-radius: 12px;
-      padding: 32px 24px;
+    .kpi-card {
+      background: var(--soft);
+      border-radius: 14px;
+      padding: 22px 20px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      overflow: hidden;
     }
-    .about-panel h3 { color: rgba(255,255,255,0.9); margin-bottom: 20px; font-size: 14px; letter-spacing: 3px; }
-    .about-stats {
+    .kpi-card .kpi-icon {
+      width: 42px;
+      height: 42px;
+      background: white;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 22px;
+      margin-bottom: 14px;
+    }
+    .kpi-card .kpi-value {
+      font-size: 34px;
+      font-weight: 900;
+      color: var(--primary);
+      line-height: 1;
+      letter-spacing: -0.5px;
+      margin-bottom: 4px;
+    }
+    .kpi-card .kpi-value .unit { font-size: 18px; color: var(--primary); margin-left: 2px; }
+    .kpi-card .kpi-label {
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--navy);
+      margin-bottom: 8px;
+    }
+    .kpi-card .kpi-desc {
+      font-size: 11px;
+      color: var(--ink-2);
+      line-height: 1.55;
+    }
+
+    /* ═══════════════════════════════════════════
+       Slide 3: Similar Cases wall
+    ═══════════════════════════════════════════ */
+    .cases-slide { flex-direction: column; }
+    .cases-body {
+      flex: 1;
+      min-height: 0;
+      display: grid;
+      grid-template-columns: 1fr 1.4fr;
+      gap: 24px;
+    }
+    .cases-body .about-stats {
+      background: linear-gradient(135deg, var(--navy) 0%, var(--primary-dk) 100%);
+      color: white;
+      border-radius: 14px;
+      padding: 24px 22px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+    .about-stats .tag {
+      font-size: 11px;
+      letter-spacing: 3px;
+      opacity: 0.75;
+      margin-bottom: 4px;
+      font-weight: 700;
+    }
+    .about-stats h3 {
+      font-size: 22px;
+      font-weight: 800;
+      margin-bottom: 24px;
+      letter-spacing: 0.5px;
+    }
+    .about-stats .stats-grid {
       display: grid;
       grid-template-columns: 1fr 1fr;
-      gap: 18px 12px;
+      gap: 20px 14px;
     }
-    .about-stat .n { font-size: 34px; font-weight: 900; letter-spacing: 1px; line-height: 1; }
-    .about-stat .l { font-size: 12px; color: rgba(255,255,255,0.75); margin-top: 4px; }
-    .about-panel .desc { font-size: 12px; margin-top: 24px; line-height: 1.75; color: rgba(255,255,255,0.85); }
+    .stats-grid .stat .n {
+      font-size: 30px;
+      font-weight: 900;
+      letter-spacing: -0.5px;
+      line-height: 1;
+    }
+    .stats-grid .stat .l {
+      font-size: 11px;
+      opacity: 0.75;
+      margin-top: 4px;
+    }
+    .about-stats .footer {
+      font-size: 11px;
+      opacity: 0.7;
+      line-height: 1.65;
+      margin-top: 20px;
+    }
 
-    .case-panel h3 { margin-bottom: 14px; }
+    .case-panel { display: flex; flex-direction: column; min-height: 0; }
+    .case-panel-head {
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--navy);
+      margin-bottom: 12px;
+    }
     .case-grid {
       display: grid;
       grid-template-columns: repeat(4, 1fr);
       gap: 10px;
-      align-content: start;
+      overflow: hidden;
     }
     .case-card {
-      background: var(--bg-soft);
+      background: var(--soft-2);
       border: 1px solid var(--line);
-      border-radius: 8px;
-      padding: 14px 10px 12px;
+      border-radius: 10px;
+      padding: 12px 8px 10px;
       text-align: center;
       transition: all 0.15s;
       overflow: hidden;
     }
     .case-card .logo {
-      font-size: 22px;
+      font-size: 18px;
       font-weight: 900;
-      color: var(--dinghsin-navy);
-      letter-spacing: 1px;
+      color: var(--navy);
       line-height: 1;
-      margin-bottom: 6px;
+      margin-bottom: 5px;
+      letter-spacing: 0.5px;
     }
-    .case-card .industry { font-size: 10px; color: var(--muted); letter-spacing: 0.5px; }
-    .case-card.match { background: #ebf4ff; border-color: var(--dinghsin-blue); }
-    .case-card.match .logo { color: var(--dinghsin-blue); }
+    .case-card .industry {
+      font-size: 9px;
+      color: var(--muted);
+      letter-spacing: 0.5px;
+    }
+    .case-card.match {
+      background: var(--soft);
+      border-color: var(--primary);
+      box-shadow: 0 2px 8px rgba(1,175,240,0.15);
+    }
+    .case-card.match .logo { color: var(--primary-dk); }
 
-    /* ─── Slide 3: 行業常見議題 ─── */
-    .issues-slide { flex-direction: column; }
-    .issue-grid {
-      display: grid;
-      grid-template-columns: repeat(2, 1fr);
-      gap: 16px;
+    /* ═══════════════════════════════════════════
+       Slide 4: Section Divider (dark blueprint)
+    ═══════════════════════════════════════════ */
+    .divider-slide {
+      background: var(--navy-2);
+      color: white;
+      padding: 0 8% 5%;
+      justify-content: center;
+      position: relative;
+      overflow: hidden;
+    }
+    .divider-slide::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background:
+        linear-gradient(90deg, rgba(255,255,255,0.04) 1px, transparent 1px),
+        linear-gradient(0deg, rgba(255,255,255,0.04) 1px, transparent 1px);
+      background-size: 26px 26px;
+      opacity: 0.9;
+    }
+    .divider-slide::after {
+      content: '';
+      position: absolute;
+      right: -10%;
+      top: -20%;
+      width: 70%;
+      height: 140%;
+      background:
+        linear-gradient(135deg, transparent 45%, rgba(1,175,240,0.15) 46%, rgba(1,175,240,0.15) 47%, transparent 48%),
+        linear-gradient(45deg, transparent 45%, rgba(1,175,240,0.1) 46%, rgba(1,175,240,0.1) 47%, transparent 48%);
+      background-size: 60px 60px;
+      opacity: 0.5;
+      transform: rotate(15deg);
+      pointer-events: none;
+    }
+    .divider-slide > * { position: relative; z-index: 1; }
+    .divider-slide .divider-tag {
+      font-size: 12px;
+      color: var(--primary);
+      letter-spacing: 3px;
+      font-weight: 700;
+      margin-bottom: 20px;
+      text-transform: uppercase;
+    }
+    .divider-slide h1 {
+      font-size: 54px;
+      font-weight: 900;
+      line-height: 1.2;
+      letter-spacing: 1px;
+      margin-bottom: 18px;
+      max-width: 84%;
+    }
+    .divider-slide h1 .highlight { color: var(--primary); }
+    .divider-slide .divider-en {
+      font-size: 22px;
+      color: rgba(255,255,255,0.7);
+      font-weight: 400;
+      letter-spacing: 0.5px;
+      margin-bottom: 40px;
+    }
+    .divider-slide .divider-meta {
+      position: absolute;
+      bottom: 12%;
+      left: 8%;
+      font-size: 13px;
+      color: rgba(255,255,255,0.6);
+      letter-spacing: 1px;
+    }
+
+    /* ═══════════════════════════════════════════
+       Slide 5: Pain Points Table
+    ═══════════════════════════════════════════ */
+    .pain-slide { flex-direction: column; padding-bottom: 5%; }
+    .pain-table {
       flex: 1;
       min-height: 0;
-    }
-    .issue-card {
-      border: 1.5px solid var(--line);
-      border-radius: 10px;
-      padding: 20px;
       display: flex;
-      gap: 16px;
-      align-items: flex-start;
+      flex-direction: column;
+      background: white;
+      border-radius: 12px;
+      overflow: hidden;
+      border: 1px solid var(--line);
     }
-    .issue-card .num {
-      font-size: 32px;
-      font-weight: 900;
-      color: var(--dinghsin-blue);
-      line-height: 1;
-      opacity: 0.4;
-      min-width: 42px;
+    .pain-table .row {
+      display: grid;
+      grid-template-columns: 130px 1fr 1fr;
+      gap: 0;
+      align-items: stretch;
     }
-    .issue-card .body h4 {
-      font-size: 17px;
-      color: var(--dinghsin-navy);
-      font-weight: 800;
-      margin-bottom: 6px;
+    .pain-table .row.header {
+      background: var(--soft);
+      color: var(--navy);
     }
-    .issue-card .body p {
+    .pain-table .row.header > div {
+      padding: 10px 16px;
       font-size: 13px;
-      color: var(--muted);
-      line-height: 1.7;
+      font-weight: 800;
+      letter-spacing: 1px;
     }
-    .issue-hit {
-      border-color: var(--accent);
-      background: #fffaf0;
+    .pain-table .row.body {
+      border-top: 1px solid var(--line);
     }
-    .issue-hit .num { color: var(--accent); opacity: 0.8; }
-    .issue-hit-tag {
-      display: inline-block;
-      background: var(--accent);
-      color: white;
-      font-size: 10px;
+    .pain-table .row.body > div {
+      padding: 14px 16px;
+      font-size: 12.5px;
+      line-height: 1.65;
+    }
+    .pain-table .col-type {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      color: var(--ink-2);
       font-weight: 700;
-      padding: 2px 8px;
-      border-radius: 8px;
-      margin-left: 6px;
-      vertical-align: middle;
+      font-size: 12px;
+      border-right: 1px solid var(--line);
     }
+    .pain-table .col-type .type-icon {
+      width: 32px;
+      height: 32px;
+      background: var(--soft);
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 16px;
+      color: var(--primary);
+    }
+    .pain-table .col-type .type-en {
+      font-size: 10px;
+      color: var(--muted);
+      font-weight: 500;
+    }
+    .pain-table .col-desc {
+      border-right: 1px solid var(--line);
+      color: var(--ink);
+    }
+    .pain-table .col-desc .u {
+      color: var(--primary-dk);
+      font-weight: 700;
+      border-bottom: 1.5px solid var(--primary);
+      padding-bottom: 1px;
+    }
+    .pain-table .col-expect { background: var(--soft-2); color: var(--ink-2); }
+    .pain-table .col-expect .goal {
+      display: inline-block;
+      color: var(--primary-dk);
+      font-weight: 800;
+      background: white;
+      border: 1px solid var(--primary);
+      border-radius: 4px;
+      padding: 1px 6px;
+      font-size: 11.5px;
+      margin-bottom: 3px;
+    }
+    .pain-table .row.body.type-trouble .col-type .type-icon { background: #FEF3C7; color: #D97706; }
+    .pain-table .row.body.type-disturbance .col-type .type-icon { background: #E0F2FE; color: #0284C7; }
+    .pain-table .row.body.type-barrier .col-type .type-icon { background: #FEE2E2; color: #DC2626; }
 
-    /* ─── Slide 4: 價值交付 ─── */
-    .value-slide { flex-direction: column; }
+    /* ═══════════════════════════════════════════
+       Slide 6: Value Delivery Table
+    ═══════════════════════════════════════════ */
+    .value-slide { flex-direction: column; padding-bottom: 5%; }
     .value-grid {
+      flex: 1;
+      min-height: 0;
       display: grid;
       grid-template-columns: repeat(3, 1fr);
-      gap: 14px;
-      flex: 1;
-      min-height: 0;
+      gap: 12px;
       overflow: hidden;
     }
     .value-card {
-      background: var(--bg-soft);
-      border-left: 4px solid var(--dinghsin-blue);
-      border-radius: 8px;
-      padding: 16px 18px;
+      background: white;
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      padding: 16px;
       display: flex;
       flex-direction: column;
     }
-    .value-card.tier-main { border-left-color: var(--dinghsin-navy); background: white; box-shadow: 0 2px 8px rgba(0,0,0,0.06); border: 1px solid var(--line); border-left: 4px solid var(--dinghsin-navy); }
-    .value-card .product-name {
-      font-size: 17px;
-      font-weight: 800;
-      color: var(--dinghsin-navy);
-      margin-bottom: 6px;
+    .value-card.tier-main {
+      border-color: var(--primary);
+      background: linear-gradient(135deg, white 0%, var(--soft) 100%);
+      box-shadow: 0 4px 14px rgba(1,175,240,0.12);
     }
-    .value-card .product-tier {
-      font-size: 10px;
-      font-weight: 700;
-      color: var(--dinghsin-blue);
-      letter-spacing: 1px;
-      margin-bottom: 8px;
-    }
-    .value-card .product-value {
-      font-size: 13px;
-      color: var(--ink);
-      line-height: 1.6;
+    .value-card .card-head {
+      display: flex;
+      align-items: center;
+      gap: 8px;
       margin-bottom: 10px;
+    }
+    .value-card .prod-tag {
+      font-size: 10px;
+      font-weight: 800;
+      letter-spacing: 1px;
+      color: var(--primary-dk);
+      background: white;
+      border: 1px solid var(--primary);
+      border-radius: 4px;
+      padding: 2px 6px;
+    }
+    .value-card.tier-sub .prod-tag {
+      color: var(--muted);
+      border-color: var(--line-2);
+    }
+    .value-card .prod-name {
+      font-size: 16px;
+      font-weight: 800;
+      color: var(--navy);
+      line-height: 1.25;
       flex: 1;
     }
-    .value-card .product-case {
+    .value-card .prod-value {
+      font-size: 12.5px;
+      color: var(--ink);
+      line-height: 1.65;
+      flex: 1;
+    }
+    .value-card .prod-case {
       font-size: 11px;
       color: var(--muted);
       padding-top: 10px;
-      border-top: 1px dashed var(--line);
-      line-height: 1.5;
+      margin-top: 10px;
+      border-top: 1px dashed var(--line-2);
+      line-height: 1.55;
     }
-    .value-card .product-case strong { color: var(--dinghsin-blue); font-size: 12px; }
+    .value-card .prod-case strong { color: var(--primary-dk); font-size: 11.5px; }
 
-    /* ─── Slide 5: 評估流程 ─── */
-    .process-slide { flex-direction: column; }
+    /* ═══════════════════════════════════════════
+       Slide 7: Delivery Process
+    ═══════════════════════════════════════════ */
+    .process-slide { flex-direction: column; padding-bottom: 5%; }
     .process-flow {
-      display: grid;
-      grid-template-columns: repeat(5, 1fr);
-      gap: 12px;
       flex: 1;
       min-height: 0;
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 10px;
       align-content: center;
     }
     .process-step {
-      position: relative;
       background: white;
-      border: 2px solid var(--line);
+      border: 1.5px solid var(--line);
       border-radius: 12px;
-      padding: 20px 14px;
+      padding: 18px 14px 20px;
       text-align: center;
+      position: relative;
+      transition: all 0.15s;
     }
+    .process-step:hover { border-color: var(--primary); }
     .process-step .step-num {
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      width: 38px;
-      height: 38px;
+      width: 40px;
+      height: 40px;
       border-radius: 50%;
-      background: var(--dinghsin-blue);
+      background: var(--primary);
       color: white;
       font-weight: 900;
       font-size: 16px;
-      margin-bottom: 10px;
+      margin-bottom: 12px;
+      letter-spacing: 1px;
     }
     .process-step h4 {
       font-size: 15px;
-      color: var(--dinghsin-navy);
+      color: var(--navy);
       font-weight: 800;
-      margin-bottom: 6px;
+      margin-bottom: 8px;
+      letter-spacing: 0.5px;
+    }
+    .process-step .step-en {
+      font-size: 9px;
+      color: var(--muted);
+      letter-spacing: 1px;
+      margin-bottom: 8px;
+      text-transform: uppercase;
     }
     .process-step p {
       font-size: 11px;
-      color: var(--muted);
-      line-height: 1.5;
+      color: var(--ink-2);
+      line-height: 1.55;
     }
     .process-step::after {
-      content: "→";
+      content: '→';
       position: absolute;
       top: 50%;
-      right: -14px;
+      right: -11px;
       transform: translateY(-50%);
-      color: var(--dinghsin-blue);
+      color: var(--primary);
       font-weight: 700;
       font-size: 20px;
       z-index: 1;
+      background: white;
+      padding: 0 2px;
     }
     .process-step:last-child::after { display: none; }
+
+    /* ═══════════════════════════════════════════
+       Slide 8: Closing
+    ═══════════════════════════════════════════ */
+    .closing-slide {
+      background: var(--navy-2);
+      color: white;
+      align-items: center;
+      justify-content: center;
+      padding: 6% 8%;
+      position: relative;
+      overflow: hidden;
+      text-align: center;
+    }
+    .closing-slide::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background:
+        linear-gradient(90deg, rgba(255,255,255,0.03) 1px, transparent 1px),
+        linear-gradient(0deg, rgba(255,255,255,0.03) 1px, transparent 1px);
+      background-size: 30px 30px;
+    }
+    .closing-slide > * { position: relative; z-index: 1; }
+    .closing-slide h1 {
+      font-size: 44px;
+      font-weight: 900;
+      line-height: 1.35;
+      letter-spacing: 1px;
+      margin-bottom: 20px;
+      max-width: 95%;
+    }
+    .closing-slide h1 .highlight { color: var(--primary); }
+    .closing-slide .closing-sub {
+      font-size: 18px;
+      color: rgba(255,255,255,0.75);
+      line-height: 1.7;
+      max-width: 70%;
+      margin: 0 auto;
+      font-weight: 400;
+    }
+    .closing-slide .thanks {
+      margin-top: 44px;
+      font-size: 13px;
+      color: rgba(255,255,255,0.5);
+      letter-spacing: 3px;
+    }
+    .closing-slide .thanks strong {
+      color: white;
+      font-weight: 800;
+      margin-right: 12px;
+    }
 
     /* ─── Empty state ─── */
     .empty-state {
       background: white;
       border-radius: 12px;
-      padding: 60px;
+      padding: 50px;
       text-align: center;
-      max-width: 500px;
+      max-width: 480px;
     }
-    .empty-state h2 { color: var(--dinghsin-navy); margin-bottom: 12px; }
+    .empty-state h2 { color: var(--navy); margin-bottom: 10px; font-size: 22px; }
     .empty-state p { color: var(--muted); font-size: 14px; margin-bottom: 20px; }
     .empty-state a {
       display: inline-block;
-      background: var(--dinghsin-blue);
+      background: var(--primary);
       color: white;
       padding: 10px 24px;
       border-radius: 8px;
@@ -448,7 +855,7 @@
     @media print {
       * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
       body { background: white; overflow: visible; }
-      .stage { position: static; }
+      .stage { position: static; padding: 0; }
       .nav-btn, .top-bar, .dots { display: none !important; }
       .slide {
         display: flex !important;
@@ -457,34 +864,40 @@
         height: 100vh;
         aspect-ratio: auto;
         box-shadow: none;
+        border-radius: 0;
         page-break-after: always;
         break-after: page;
       }
+      .cover-slide { flex-direction: row; }
       .slide:last-child { page-break-after: auto; }
     }
 
     /* ─── Mobile ─── */
     @media (max-width: 900px) {
-      .slide { width: 96vw; padding: 20px; }
-      .slide h1 { font-size: 26px; }
+      .slide { width: 96vw; padding: 20px; border-radius: 8px; }
+      .cover-slide { flex-direction: column; padding: 0; }
+      .cover-slide .cover-block { width: 100%; padding: 24px; min-height: 30%; }
+      .cover-slide .cover-content { padding: 24px; }
+      .cover-content h1 { font-size: 28px; }
       .slide h2 { font-size: 22px; }
-      .cover-slide h1 { font-size: 32px; }
-      .intro-slide .intro-body { grid-template-columns: 1fr; gap: 12px; }
+      .biz-hero { flex-direction: column; }
+      .kpi-grid { grid-template-columns: 1fr 1fr; overflow-y: auto; }
+      .cases-body { grid-template-columns: 1fr; gap: 14px; overflow-y: auto; }
       .case-grid { grid-template-columns: repeat(3, 1fr); }
-      .issue-grid { grid-template-columns: 1fr; gap: 8px; overflow-y: auto; }
-      .issue-card { padding: 12px; }
+      .pain-table .row { grid-template-columns: 90px 1fr 1fr; }
+      .pain-table .row.body > div { padding: 10px; font-size: 11.5px; }
       .value-grid { grid-template-columns: 1fr; overflow-y: auto; }
       .process-flow { grid-template-columns: 1fr 1fr; }
       .process-step::after { display: none; }
-      .about-stats { grid-template-columns: 1fr 1fr; }
-      .about-stat .n { font-size: 24px; }
+      .divider-slide h1 { font-size: 30px; }
+      .closing-slide h1 { font-size: 26px; }
     }
   </style>
 </head>
 <body>
 
 <div class="top-bar">
-  <div class="brand">鼎新</div>
+  <div class="brand">鼎新 · DINGHSIN</div>
   <div class="actions">
     <button class="icon-btn" onclick="toggleFullscreen()">⛶ 全螢幕</button>
     <button class="icon-btn" onclick="window.print()">🖨️ 列印</button>
@@ -495,194 +908,96 @@
 <button class="nav-btn nav-prev" onclick="prevSlide()">◀</button>
 <button class="nav-btn nav-next" onclick="nextSlide()">▶</button>
 
-<div class="stage" id="stage">
-  <!-- Slides injected here -->
-</div>
+<div class="stage" id="stage"></div>
 
 <div class="dots" id="dots"></div>
 
 <script>
   // ══════════════════════════════════════════
-  //  可擴充資料區 — 業務員之後可自行補充
+  //  可擴充資料區
   // ══════════════════════════════════════════
-
-  // ── 類似客戶案例庫（LOGO 牆用）──
-  // 之後可繼續補充。industry 用產品類型關鍵字，scale 用人數對應
   const CASE_LIBRARY = [
-    // 服飾/紡織
     { name: '凱渥',       industry: '服飾', scale: 'mid',   note: '造型模特兒經紀' },
     { name: '傲索',       industry: '服飾', scale: 'small', note: '女裝品牌' },
     { name: '吸引力',     industry: '服飾', scale: 'mid',   note: '通路品牌' },
-    // 食品/餐飲
     { name: '乾杯',       industry: '食品', scale: 'mid',   note: '餐飲連鎖' },
     { name: '吉野家',     industry: '食品', scale: 'large', note: '餐飲連鎖' },
     { name: '兩班家',     industry: '食品', scale: 'mid',   note: '餐飲連鎖' },
     { name: '全家',       industry: '食品', scale: 'large', note: '零售連鎖' },
     { name: '全聯',       industry: '食品', scale: 'large', note: '零售連鎖' },
-    // 3C / 電子
     { name: '世博',       industry: '3C',   scale: 'mid',   note: '電子製造' },
     { name: '中華金屬',   industry: '3C',   scale: 'mid',   note: '金屬材料' },
     { name: '台灣東芝',   industry: '3C',   scale: 'large', note: '家電製造' },
-    // 珠寶/精品
     { name: '京華鑽石',   industry: '珠寶', scale: 'mid',   note: '精品珠寶' },
     { name: '侏羅紀',     industry: '珠寶', scale: 'small', note: '珠寶零售' },
-    // 飯店/餐飲
     { name: '六福集團',   industry: '服務', scale: 'large', note: '飯店集團' },
     { name: '京站',       industry: '零售', scale: 'large', note: '商場' },
     { name: '美麗華',     industry: '零售', scale: 'large', note: '百貨商場' },
-    // 服務/連鎖
     { name: '史泰博',     industry: '零售', scale: 'mid',   note: 'B2B 辦公用品' },
-    // 運動/健身
     { name: 'BENQ',       industry: '3C',   scale: 'large', note: '影音品牌' },
   ];
 
-  // ── 行業常見議題庫 ──
-  // 之後可依實際銷售場景擴充 industryKey → issues[]
+  // ── 行業常見議題（保留但目前投影片主要用客戶自己的痛點）
   const INDUSTRY_ISSUES = {
-    '服飾': [
-      { title: '多通路訂單管理', desc: '電商／門市／批發訂單分散，庫存共用計算複雜' },
-      { title: '會員忠誠度經營',  desc: '通路多元但缺乏會員全通路資料串接，難做分眾行銷' },
-      { title: '季節性採購壓力',  desc: '款式週期短、下單量預測難，成品滯銷風險高' },
-      { title: '委外代工管理',   desc: '成衣多數委外，需追蹤加工廠進度與品質' },
-    ],
-    '食品': [
-      { title: '食安追溯',       desc: '從原料進貨到成品出貨的批號／效期追蹤義務' },
-      { title: '效期管理',       desc: '短效期產品進銷存管控，避免呆滯與過期' },
-      { title: '多門店同步',     desc: '連鎖門店 POS 資料需即時同步後台，庫存共用' },
-      { title: '通路整合',       desc: '外送平台、電商、實體門市訂單來源多元' },
-    ],
-    '3C 電子': [
-      { title: '產品週期短',     desc: '料號更新快、庫存週轉壓力大' },
-      { title: '料號管理複雜',   desc: 'BOM 表管理、料號結構、替代料需求' },
-      { title: '通路價保',       desc: '通路多、報價機制與價保處理複雜' },
-      { title: '售後服務',       desc: 'RMA 流程、序號追蹤、保固管理' },
-    ],
-    '機械設備': [
-      { title: '專案型生產',     desc: '客製化訂單、每個案子 BOM 不同' },
-      { title: '售後服務追蹤',   desc: '設備長生命週期、需要保養／料件管理' },
-      { title: '委外協力',       desc: '關鍵零件多委外加工，需追蹤協力廠' },
-      { title: '合約管理',       desc: '大金額專案含分期付款、驗收條件' },
-    ],
-    '珠寶': [
-      { title: '單品高價值',     desc: '每件商品獨一無二，需序號級管理' },
-      { title: '會員經營',       desc: '客戶終身價值高，需完整客戶檔案' },
-      { title: '寄售與修改',     desc: '進貨型態多元、修改工單追蹤' },
-      { title: '通路策略',       desc: '精品需維持品牌一致性，通路控管嚴格' },
-    ],
-    // 通用（無特定產業時使用）
-    '通用': [
-      { title: '資料整合困難',   desc: '各系統／各通路資料分散，無法統一決策' },
-      { title: '流程仰賴人工',   desc: '許多流程依靠 Excel 或口頭，易錯漏' },
-      { title: '報表產出耗時',   desc: '月結報表需大量手工，經營者無法即時判斷' },
-      { title: '會員／客戶經營', desc: '缺乏客戶資料完整檔案與行銷工具' },
-    ],
+    '服飾': ['多通路訂單管理', '會員忠誠度經營', '季節性採購壓力', '委外代工管理'],
+    '食品': ['食安追溯', '效期管理', '多門店同步', '通路整合'],
+    '3C 電子': ['產品週期短', '料號管理複雜', '通路價保', '售後服務'],
+    '機械設備': ['專案型生產', '售後服務追蹤', '委外協力', '合約管理'],
+    '珠寶': ['單品高價值', '會員經營', '寄售與修改', '通路策略'],
+    '通用': ['資料整合困難', '流程仰賴人工', '報表產出耗時', '會員/客戶經營'],
   };
 
-  // ── 產品價值庫（每個產品的一句話價值 + 實際客戶案例）──
-  // 之後可補充更多產品或案例
   const PRODUCT_VALUE = {
-    'T100 ERP': {
-      value: '大型企業級 ERP，跨公司、跨幣別、多組織會計整合',
-      cases: [{ client: '台灣東芝', outcome: '整合家電製造多廠據點' }],
-    },
-    'Cosmos ERP': {
-      value: '中小型企業標配 ERP，快速上線、標準化流程',
-      cases: [{ client: '京華鑽石', outcome: '從人工作業轉為系統化管理' }],
-    },
-    'Workflow': {
-      value: 'BPM 流程管理，跨部門電子簽核、行動化審核',
-      cases: [{ client: '六福集團', outcome: '全集團簽核流程電子化' }],
-    },
-    'DSP 外連服務平台': {
-      value: '整合電商／批發訂單自動下拉，減少手動作業',
-      cases: [{ client: '全家', outcome: '多平台訂單集中處理' }],
-    },
-    'CosmosPOS': {
-      value: '多門店 POS 收銀 + 會員一體化，門市即時同步',
-      cases: [{ client: '吉野家', outcome: '連鎖門店 POS 統一管理' }],
-    },
-    '91APP OMO': {
-      value: 'OMO 全渠道整合，線上線下會員資料同步',
-      cases: [{ client: '美麗華', outcome: '百貨會員 OMO 經營' }],
-    },
-    '高效儲運 / INV 模組': {
-      value: '進銷存自動化、庫存即時可視化',
-      cases: [{ client: '全聯', outcome: '連鎖零售庫存精準化' }],
-    },
-    'PDA': {
-      value: '倉儲盤點行動化、條碼快速作業',
-      cases: [{ client: '全家', outcome: '門市進貨盤點時間縮短 60%' }],
-    },
-    'HR Solution': {
-      value: '人事、薪資、考勤、簽核一體化',
-      cases: [{ client: '六福集團', outcome: '多館別人事作業統一' }],
-    },
-    'CRM': {
-      value: '會員生命週期管理、分眾行銷',
-      cases: [{ client: '凱渥', outcome: '模特兒／客戶關係管理系統化' }],
-    },
-    'CRM 客戶關係管理': {
-      value: '會員生命週期管理、分眾行銷',
-      cases: [{ client: '凱渥', outcome: '模特兒／客戶關係管理系統化' }],
-    },
-    'BI 商業智慧': {
-      value: '即時業績報表、經營儀表板',
-      cases: [{ client: '京站', outcome: '商場業績即時視覺化' }],
-    },
-    'AI 一體機 / 地端大模型': {
-      value: 'AI 助手嵌入業務流程，提升決策效率',
-      cases: [{ client: '（多家企業）', outcome: 'AI 客服／報表分析' }],
-    },
-    'ESG 方案': {
-      value: '碳盤查與永續報告自動化',
-      cases: [{ client: '（多家上市櫃）', outcome: '符合 ESG 揭露要求' }],
-    },
-    'ERP 全模組導入': {
-      value: '從無系統／人工作業建立完整系統化管理',
-      cases: [{ client: '三澧企業', outcome: '從 Excel 轉為 ERP 全流程' }],
-    },
-    'SFC 車間管理': {
-      value: '工單、製令、車間排程管理',
-      cases: [{ client: '中華金屬', outcome: '車間即時進度追蹤' }],
-    },
-    'MRP 物料需求規劃': {
-      value: '物料需求計算、委外協力管理',
-      cases: [{ client: '（多家製造業）', outcome: 'MRP 自動排程' }],
-    },
-    'OM 訂單管理 + INV 庫存': {
-      value: '訂單／庫存週轉核心模組',
-      cases: [{ client: '史泰博', outcome: 'B2B 訂單庫存整合' }],
-    },
-    '資料移轉服務': {
-      value: '既有系統資料清洗、遷移到鼎新',
-      cases: [{ client: '（多家客戶）', outcome: '從正航／自建系統平順遷移' }],
-    },
-    '系統併行 / 資料整合': {
-      value: '與 SAP／Oracle 併行整合',
-      cases: [{ client: 'BENQ', outcome: '子公司併入母公司 SAP' }],
-    },
+    'T100 ERP':               { value: '大型企業級 ERP，跨公司、跨幣別、多組織會計整合',              cases: [{ client: '台灣東芝', outcome: '整合家電製造多廠據點' }] },
+    'Cosmos ERP':             { value: '中小型企業標配 ERP，快速上線、標準化流程',                 cases: [{ client: '京華鑽石', outcome: '從人工作業轉為系統化管理' }] },
+    'Workflow':               { value: 'BPM 流程管理，跨部門電子簽核、行動化審核',                 cases: [{ client: '六福集團', outcome: '全集團簽核流程電子化' }] },
+    'DSP 外連服務平台':          { value: '整合電商／批發訂單自動下拉，減少手動作業',                cases: [{ client: '全家', outcome: '多平台訂單集中處理' }] },
+    'CosmosPOS':              { value: '多門店 POS 收銀 + 會員一體化，門市即時同步',              cases: [{ client: '吉野家', outcome: '連鎖門店 POS 統一管理' }] },
+    '91APP OMO':              { value: 'OMO 全渠道整合，線上線下會員資料同步',                    cases: [{ client: '美麗華', outcome: '百貨會員 OMO 經營' }] },
+    '高效儲運 / INV 模組':      { value: '進銷存自動化、庫存即時可視化',                            cases: [{ client: '全聯', outcome: '連鎖零售庫存精準化' }] },
+    'PDA':                   { value: '倉儲盤點行動化、條碼快速作業',                            cases: [{ client: '全家', outcome: '門市進貨盤點時間縮短 60%' }] },
+    'HR Solution':            { value: '人事、薪資、考勤、簽核一體化',                              cases: [{ client: '六福集團', outcome: '多館別人事作業統一' }] },
+    'CRM':                   { value: '會員生命週期管理、分眾行銷',                                cases: [{ client: '凱渥', outcome: '模特兒／客戶關係管理系統化' }] },
+    'CRM 客戶關係管理':         { value: '會員生命週期管理、分眾行銷',                                cases: [{ client: '凱渥', outcome: '模特兒／客戶關係管理系統化' }] },
+    'BI 商業智慧':             { value: '即時業績報表、經營儀表板',                                  cases: [{ client: '京站', outcome: '商場業績即時視覺化' }] },
+    'AI 一體機 / 地端大模型':    { value: 'AI 助手嵌入業務流程，提升決策效率',                        cases: [{ client: '（多家企業）', outcome: 'AI 客服／報表分析' }] },
+    'ESG 方案':               { value: '碳盤查與永續報告自動化',                                   cases: [{ client: '（多家上市櫃）', outcome: '符合 ESG 揭露要求' }] },
+    'ERP 全模組導入':          { value: '從無系統／人工作業建立完整系統化管理',                    cases: [{ client: '三澧企業', outcome: '從 Excel 轉為 ERP 全流程' }] },
+    'SFC 車間管理':            { value: '工單、製令、車間排程管理',                                cases: [{ client: '中華金屬', outcome: '車間即時進度追蹤' }] },
+    'MRP 物料需求規劃':         { value: '物料需求計算、委外協力管理',                              cases: [{ client: '（多家製造業）', outcome: 'MRP 自動排程' }] },
+    'OM 訂單管理 + INV 庫存':   { value: '訂單／庫存週轉核心模組',                                  cases: [{ client: '史泰博', outcome: 'B2B 訂單庫存整合' }] },
+    '資料移轉服務':            { value: '既有系統資料清洗、遷移到鼎新',                            cases: [{ client: '（多家客戶）', outcome: '從正航／自建系統平順遷移' }] },
+    '系統併行 / 資料整合':      { value: '與 SAP／Oracle 併行整合',                                cases: [{ client: 'BENQ', outcome: '子公司併入母公司 SAP' }] },
   };
 
-  // ── 評估流程 ──（可擴充或改文案）
   const PROCESS_STEPS = [
-    { num: '01', title: '需求訪談',     desc: '深入了解營運痛點與期望目標' },
-    { num: '02', title: '顧問評估',     desc: '產品專家分析需求，草擬解決方案' },
-    { num: '03', title: '方案簡報',     desc: '解決方案簡報、報價與導入時程' },
-    { num: '04', title: 'POC 驗證',    desc: '關鍵情境驗證，降低導入風險' },
-    { num: '05', title: '導入 & 維運', desc: '顧問陪跑上線、教育訓練、長期維運' },
+    { num: '01', title: '需求訪談', en: 'DISCOVERY',   desc: '深入了解營運痛點與期望目標' },
+    { num: '02', title: '顧問評估', en: 'ASSESSMENT',  desc: '產品專家分析需求，草擬解決方案' },
+    { num: '03', title: '方案簡報', en: 'PROPOSAL',    desc: '解決方案簡報、報價與導入時程' },
+    { num: '04', title: 'POC 驗證', en: 'VALIDATION',  desc: '關鍵情境驗證，降低導入風險' },
+    { num: '05', title: '導入維運', en: 'DELIVERY',    desc: '顧問陪跑上線、教育訓練、長期維運' },
   ];
 
-  // ── 鼎新 ABOUT 統計數字 ──（可依實際更新）
   const ABOUT_STATS = [
     { n: '40+',    l: '年軟體服務經驗' },
     { n: '18,000+', l: '企業客戶' },
-    { n: '2,000+', l: '顧問團隊' },
+    { n: '2,000+',  l: '顧問團隊' },
     { n: '90%+',    l: '客戶滿意度' },
   ];
 
-  // ══════════════════════════════════════════
-  //  以下為程式邏輯 — 一般情況下不需修改
-  // ══════════════════════════════════════════
+  // ── 痛點對應期望目標庫（可擴充）
+  const PAIN_TO_GOAL = [
+    { re: /庫存|盤點|對不準|滯銷/, goal: '庫存精準化', desc: '透過 INV 模組與 PDA 條碼盤點，確保庫存資料即時可信，降低呆滯風險。' },
+    { re: /訂單|手動|匯入|對帳/,   goal: '訂單自動化', desc: 'DSP 外連服務平台整合電商訂單自動下拉，減少人工作業與比對錯誤。' },
+    { re: /會員|回購|CRM|忠誠/i,   goal: '會員經營',   desc: 'CRM 建立會員資料庫，執行分眾行銷與生命週期經營，提升回購率。' },
+    { re: /流程|簽核|請購|審核/,   goal: '流程數位化', desc: 'Workflow BPM 讓跨部門簽核電子化與行動化，加速決策時效。' },
+    { re: /報表|績效|分析|資料視覺/, goal: '即時決策',   desc: 'BI 商業智慧提供即時經營儀表板，替換月結報表滯後問題。' },
+    { re: /人事|薪資|排班|考勤/,   goal: 'HR 自動化',  desc: 'HR Solution 統一管理人事薪資考勤，減少行政負擔。' },
+    { re: /電商|通路|整合|串接/,   goal: '通路整合',   desc: 'DSP 平台統一多通路訂單與庫存資料，避免超賣與客訴。' },
+    { re: /門店|POS|門市|分店/,   goal: '門店一體化', desc: 'CosmosPOS 多門店 POS 與會員一體化，門市即時同步後台。' },
+    { re: /生產|工單|製令|排程/,   goal: '生產可視化', desc: 'SFC 車間管理與 MRP 物料計畫，掌握生產進度與物料需求。' },
+    { re: /財務|成本|帳結|發票/,   goal: '財務精準化', desc: '整合 ERP 財務模組，帳結週期縮短，成本歸屬清晰。' },
+  ];
 
   const KEY_CLIENTS = 'dinghsin.clients';
 
@@ -715,21 +1030,20 @@
     return 'small';
   }
 
-  // 為 slide 2 挑選類似案例（同產業優先，再補其他）
   function pickCases(client, target = 12) {
     const industry = getIndustryKey(client);
     const scale = getScaleKey(client);
-    // 同產業同規模 → 同產業任規模 → 任產業同規模 → 其他
-    const tier1 = CASE_LIBRARY.filter(c => c.industry === industry && c.scale === scale);
-    const tier2 = CASE_LIBRARY.filter(c => c.industry === industry && c.scale !== scale);
-    const tier3 = CASE_LIBRARY.filter(c => c.industry !== industry && c.scale === scale);
-    const tier4 = CASE_LIBRARY.filter(c => c.industry !== industry && c.scale !== scale);
+    const industryMap = { '服飾':'服飾', '食品':'食品', '3C 電子':'3C', '機械設備':'3C', '珠寶':'珠寶', '通用':null };
+    const targetInd = industryMap[industry];
+    const tier1 = CASE_LIBRARY.filter(c => c.industry === targetInd && c.scale === scale);
+    const tier2 = CASE_LIBRARY.filter(c => c.industry === targetInd && c.scale !== scale);
+    const tier3 = CASE_LIBRARY.filter(c => c.industry !== targetInd && c.scale === scale);
+    const tier4 = CASE_LIBRARY.filter(c => c.industry !== targetInd && c.scale !== scale);
     const picked = [...tier1, ...tier2, ...tier3, ...tier4].slice(0, target);
-    const matchSet = new Set(tier1.map(c => c.name));
+    const matchSet = new Set([...tier1, ...tier2].map(c => c.name));
     return picked.map(c => ({ ...c, isMatch: matchSet.has(c.name) }));
   }
 
-  // 從 index.html 沿用的解決方案推薦邏輯（簡化重要邏輯）
   function computeRecommendations(d) {
     const channels = d.channels || [];
     const production = d.production || [];
@@ -739,7 +1053,6 @@
     const pain = (d.pain || '') + ' ' + (d.notes || '') + ' ' + (d.sysWeakness || '') + ' ' + (d.sysImprovement || '');
     const largeScale = /500人以上|301～500人/.test(d.headcount || '') ||
                        /5億以上|1億～5億|5,000萬～1億/.test(d.capital || '');
-
     const map = new Map();
     const add = (name, tier, reason) => {
       if (!map.has(name)) map.set(name, { name, tier, reasons: [] });
@@ -747,18 +1060,15 @@
       if (!s.reasons.includes(reason)) s.reasons.push(reason);
       if (tier === 'main') s.tier = 'main';
     };
-
     if (erp.includes('T100')) add('T100 ERP', 'main', '客戶明確指定');
     else if (erp.includes('Cosmos')) add('Cosmos ERP', 'main', '客戶明確指定');
     else if (largeScale) add('T100 ERP', 'main', '大型企業規模適用');
     else add('Cosmos ERP', 'main', '中小型企業標配');
     if (erp.includes('Workflow')) add('Workflow', 'main', '客戶明確指定');
-
     if (channels.some(c => c.startsWith('電商')))  add('DSP 外連服務平台', 'main', '電商通路整合');
     if (channels.some(c => c.startsWith('電商')) || channels.some(c => c.startsWith('官網')))
       add('91APP OMO', 'sub', 'OMO 全渠道整合');
     if (channels.some(c => c.startsWith('門店'))) add('CosmosPOS', 'main', '多門店 POS 整合');
-
     if (/庫存|倉儲|盤點|對不準/.test(pain))         add('高效儲運 / INV 模組', 'main', '庫存管理需求');
     if (/庫存|盤點/.test(pain))                     add('PDA', 'sub', '倉儲盤點行動化');
     if (/人事|薪資|排班|考勤/.test(pain))           add('HR Solution', 'main', '人事薪資自動化');
@@ -767,79 +1077,174 @@
     if (/會員|行銷|回購|客訴/.test(pain))           add('CRM', 'main', '會員關係管理');
     if (/ESG|碳盤查|碳排/.test(pain))               add('ESG 方案', 'main', 'ESG 碳盤查');
     if (/AI|智能|自動化/i.test(pain))               add('AI 一體機 / 地端大模型', 'sub', 'AI 應用');
-
-    const erp2Map = {
-      'CRM': 'CRM 客戶關係管理',
-      'HR': 'HR Solution',
-      'DSP': 'DSP 外連服務平台',
-      'PDA': 'PDA',
-      'AI': 'AI 一體機 / 地端大模型',
-      'BI': 'BI 商業智慧',
-    };
+    const erp2Map = { 'CRM':'CRM 客戶關係管理', 'HR':'HR Solution', 'DSP':'DSP 外連服務平台', 'PDA':'PDA', 'AI':'AI 一體機 / 地端大模型', 'BI':'BI 商業智慧' };
     erp2.forEach(p => { if (erp2Map[p]) add(erp2Map[p], 'main', '客戶明確指定 ' + p); });
-
     if (production.includes('自行生產') || production.includes('兩者皆有'))
       add('SFC 車間管理', 'sub', '自行生產需要車間管理');
     if (production.includes('委外代工') || production.includes('兩者皆有'))
       add('MRP 物料需求規劃', 'sub', '委外代工需要物料規劃');
     if (production.includes('純流通（不生產）'))
       add('OM 訂單管理 + INV 庫存', 'sub', '純流通業以訂單／庫存為主');
-
     if (currentSys.includes('Excel / 人工') || currentSys.includes('無系統'))
       add('ERP 全模組導入', 'main', '從人工作業建立系統化');
     if (currentSys.some(s => /正航/.test(s))) add('資料移轉服務', 'sub', '從正航遷移到鼎新');
-
     return Array.from(map.values()).sort((a, b) => (a.tier === b.tier) ? 0 : (a.tier === 'main' ? -1 : 1));
   }
 
+  // ── 痛點分析：把 d.pain + d.sysWeakness 拆成表格列
+  function analyzePains(d) {
+    const raw = ((d.pain || '') + '、' + (d.sysWeakness || '')).trim();
+    const segments = raw.split(/[、,，。；\n]/).map(s => s.trim()).filter(s => s.length >= 4);
+    return segments.slice(0, 5).map((seg, idx) => {
+      // 分類：麻煩=作業執行類 / 困擾=中層調度類 / 障礙=決策層類
+      let type = '麻煩', typeEn = 'Trouble', typeClass = 'type-trouble';
+      if (/決策|判斷|預估|策略|審案|老闆/.test(seg)) {
+        type = '障礙'; typeEn = 'Barrier'; typeClass = 'type-barrier';
+      } else if (/調度|規劃|預測|排程|人力/.test(seg)) {
+        type = '困擾'; typeEn = 'Disturbance'; typeClass = 'type-disturbance';
+      }
+      // 匹配期望目標
+      let goal = { goal: '系統化管理', desc: '導入 ERP 建立標準化流程與資料一致性。' };
+      for (const p of PAIN_TO_GOAL) { if (p.re.test(seg)) { goal = p; break; } }
+      return { type, typeEn, typeClass, description: seg, goal };
+    });
+  }
+
+  // 標記描述句中的關鍵字（因為/所以）
+  function highlightPain(text) {
+    return escHtml(text)
+      .replace(/(因為|所以|且|以及)/g, '<span class="u">$1</span>');
+  }
+
+  function getKpiData(d) {
+    const cards = [];
+    // 1. 公司人數
+    cards.push({
+      icon: '👥',
+      value: d.headcount ? d.headcount.replace(/[人以上下]/g, '') : '—',
+      unit: '人',
+      label: '公司規模',
+      desc: d.headcount ? `目前員工規模：${d.headcount}` : '待補公司規模資訊',
+    });
+    // 2. 資本額
+    cards.push({
+      icon: '💰',
+      value: d.capital || '—',
+      unit: '',
+      label: '資本額',
+      desc: '參考企業資本規模與財務基礎',
+    });
+    // 3. 產業別
+    const industry = getIndustryKey(d);
+    cards.push({
+      icon: '🏭',
+      value: d.productType || industry,
+      unit: '',
+      label: '產品類型',
+      desc: industry !== '通用' ? `歸屬 ${industry} 產業族群` : '產品領域待進一步了解',
+    });
+    // 4. 通路
+    cards.push({
+      icon: '🛒',
+      value: (d.channels || []).length || '—',
+      unit: '通路',
+      label: '銷售通路',
+      desc: (d.channels || []).length
+        ? '包含 ' + d.channels.map(c => c.replace(/（.+）$/, '')).join('、')
+        : '通路配置待補',
+    });
+    return cards;
+  }
+
   // ══════════════════════════════════════════
-  //  Slide renderers — 每張投影片一個 function
-  //  之後要加新投影片就在 SLIDES 陣列加項目
+  //  Slide renderers
   // ══════════════════════════════════════════
 
   function renderCoverSlide(d) {
     const industry = getIndustryKey(d);
     return `
-      <div class="dinghsin-logo">鼎新</div>
-      ${d.grade ? `<div class="grade-tag">商機等級 ${d.grade}</div>` : ''}
-      <h1>${escHtml(d.name)}</h1>
-      <p class="subtitle">初訪簡報</p>
-      <p class="cover-tagline">
-        鼎新 ERP 解決方案初步規劃 — 依貴司${industry !== '通用' ? escHtml(industry) : ''}業務型態與現況需求，
-        提供對應產品組合與導入建議。
-      </p>
-      <div class="cover-meta">
-        <div><strong>業務員</strong><br>${escHtml(d.salesperson || '—')}</div>
-        <div><strong>拜訪日期</strong><br>${escHtml(d.visitDate || '—')}</div>
-        <div><strong>準備時間</strong><br>${new Date().toLocaleDateString('zh-TW')}</div>
+      <div class="cover-block">
+        <div class="block-brand">鼎新</div>
+        <div class="block-tag">DINGHSIN COMPUTER</div>
+      </div>
+      <div class="cover-content">
+        <div class="top-tag">ONE-PAGE EXECUTIVE SUMMARY</div>
+        <h1>${escHtml(d.name)}</h1>
+        <div class="subtitle">
+          企業概況與 ERP 解決方案初步規劃<br>
+          <span class="en">Corporate Profile & ERP Blueprint</span>
+        </div>
+        ${d.grade ? `<div class="grade-badge">商機等級 ${escHtml(d.grade)}</div>` : ''}
+        <div class="cover-tagline">
+          聚焦${industry !== '通用' ? escHtml(industry) + '產業' : '企業經營'}之核心需求，
+          從電子商務、多通路營運、財務結算與倉儲物流之數位轉型視角切入。<br>
+          <br>
+          <strong style="color:var(--navy);">${escHtml(d.salesperson || '—')}</strong>
+          &nbsp;|&nbsp; ${escHtml(d.visitDate || '—')}
+          &nbsp;|&nbsp; 鼎新電腦顧問團隊
+        </div>
       </div>
     `;
   }
 
-  function renderIntroSlide(d) {
+  function renderBizSlide(d) {
+    const kpi = getKpiData(d);
+    const industry = getIndustryKey(d);
+    return `
+      <h2>核心事業定位 <span class="en">Core Business Positioning</span></h2>
+      <div class="subline">${industry !== '通用' ? escHtml(industry) : '企業'}事業型態與規模基礎</div>
+      <div class="biz-hero">
+        <div class="icon">🏢</div>
+        <div class="body">
+          <h3>${escHtml(d.name)}</h3>
+          <p>
+            專注於${industry !== '通用' ? escHtml(industry) + '相關' : '相關'}商品開發與銷售。
+            ${(d.production || []).length ? `生產方式：${d.production.join('、')}。` : ''}
+            ${(d.channels || []).length ? `經營通路：${d.channels.map(c => c.replace(/（.+）$/, '')).join('、')}。` : ''}
+          </p>
+        </div>
+      </div>
+      <div class="kpi-grid">
+        ${kpi.map(c => `
+          <div class="kpi-card">
+            <div>
+              <div class="kpi-icon">${c.icon}</div>
+              <div class="kpi-value">${escHtml(c.value)}${c.unit ? `<span class="unit">${escHtml(c.unit)}</span>` : ''}</div>
+              <div class="kpi-label">${escHtml(c.label)}</div>
+            </div>
+            <div class="kpi-desc">${escHtml(c.desc)}</div>
+          </div>
+        `).join('')}
+      </div>
+    `;
+  }
+
+  function renderCasesSlide(d) {
     const cases = pickCases(d, 12);
     const industry = getIndustryKey(d);
     return `
-      <div class="section-tag">關於鼎新</div>
-      <h2>信賴的企業軟體夥伴</h2>
-      <div class="intro-body">
-        <div class="about-panel">
-          <h3>DATA-CENTRIC BUSINESS</h3>
-          <div class="about-stats">
-            ${ABOUT_STATS.map(s => `
-              <div class="about-stat">
-                <div class="n">${escHtml(s.n)}</div>
-                <div class="l">${escHtml(s.l)}</div>
-              </div>
-            `).join('')}
+      <h2>類似客戶案例 <span class="en">Similar Customer Cases</span></h2>
+      <div class="subline">${industry !== '通用' ? escHtml(industry) + '產業' : '同類型企業'}與相近規模導入實績</div>
+      <div class="cases-body">
+        <div class="about-stats">
+          <div>
+            <div class="tag">DATA-CENTRIC BUSINESS</div>
+            <h3>信賴的企業軟體夥伴</h3>
+            <div class="stats-grid">
+              ${ABOUT_STATS.map(s => `
+                <div class="stat">
+                  <div class="n">${escHtml(s.n)}</div>
+                  <div class="l">${escHtml(s.l)}</div>
+                </div>
+              `).join('')}
+            </div>
           </div>
-          <div class="desc">
-            鼎新電腦深耕企業資訊化 40 餘年，服務涵蓋 ERP、CRM、BI、AI、
-            雲端、行動化等全方位企業解決方案，是最多企業信賴的軟體品牌。
+          <div class="footer">
+            鼎新電腦深耕企業資訊化 40 餘年，服務涵蓋 ERP、CRM、BI、AI、雲端等全方位企業解決方案。
           </div>
         </div>
         <div class="case-panel">
-          <h3>${industry !== '通用' ? escHtml(industry) + ' 及類似客戶案例' : '客戶案例'}</h3>
+          <div class="case-panel-head">${industry !== '通用' ? escHtml(industry) + ' 及相近規模客戶（藍色為同產業）' : '各產業代表客戶'}</div>
           <div class="case-grid">
             ${cases.map(c => `
               <div class="case-card ${c.isMatch ? 'match' : ''}">
@@ -853,54 +1258,49 @@
     `;
   }
 
-  function renderIssuesSlide(d) {
-    const industry = getIndustryKey(d);
-    const issues = INDUSTRY_ISSUES[industry] || INDUSTRY_ISSUES['通用'];
-    const painText = (d.pain || '') + ' ' + (d.sysWeakness || '');
-    // 判斷哪些議題被客戶痛點命中（依關鍵字）
-    const hitMap = {
-      '多通路訂單管理': /通路|訂單|平台/,
-      '會員忠誠度經營': /會員|回購|忠誠|CRM/i,
-      '季節性採購壓力': /採購|季節|滯銷|過季/,
-      '委外代工管理': /代工|委外|OEM/i,
-      '食安追溯': /追溯|批號|履歷/,
-      '效期管理': /效期|過期|保存/,
-      '多門店同步': /門店|門市|分店|POS/,
-      '通路整合': /整合|串接|同步/,
-      '產品週期短': /週期|新品|迭代/,
-      '料號管理複雜': /料號|BOM|物料/i,
-      '通路價保': /價保|報價|價差/,
-      '售後服務': /售後|保固|維修|RMA/i,
-      '專案型生產': /專案|客製|訂做/,
-      '售後服務追蹤': /售後|保固|維修/,
-      '委外協力': /委外|協力|外包/,
-      '合約管理': /合約|驗收|分期/,
-      '單品高價值': /高單價|精品|序號/,
-      '會員經營': /會員|CRM|客戶/i,
-      '寄售與修改': /寄售|修改|改款/,
-      '通路策略': /通路|品牌|定價/,
-      '資料整合困難': /整合|串接|對不上/,
-      '流程仰賴人工': /手動|人工|Excel/i,
-      '報表產出耗時': /報表|統計|分析/,
-      '會員／客戶經營': /會員|客戶|CRM/i,
-    };
+  function renderDividerSlide(d) {
     return `
-      <div class="section-tag">${industry !== '通用' ? escHtml(industry) + ' · 常見議題' : '常見營運議題'}</div>
-      <h2>企業經常面臨的挑戰</h2>
-      <div class="issue-grid">
-        ${issues.map((iss, idx) => {
-          const hitPattern = hitMap[iss.title];
-          const isHit = hitPattern && hitPattern.test(painText);
-          return `
-            <div class="issue-card ${isHit ? 'issue-hit' : ''}">
-              <div class="num">${String(idx + 1).padStart(2, '0')}</div>
-              <div class="body">
-                <h4>${escHtml(iss.title)}${isHit ? '<span class="issue-hit-tag">貴司提及</span>' : ''}</h4>
-                <p>${escHtml(iss.desc)}</p>
-              </div>
+      <div class="divider-tag">PART 2 · Section</div>
+      <h1>營運聚焦：<span class="highlight">麻煩、困擾</span>與障礙分析</h1>
+      <div class="divider-en">Pain Points Analysis & Strategic Alignment</div>
+      <div class="divider-meta">
+        ${escHtml(new Date().toLocaleDateString('zh-TW'))} &nbsp;|&nbsp; 鼎新電腦顧問團隊
+      </div>
+    `;
+  }
+
+  function renderPainSlide(d) {
+    const rows = analyzePains(d);
+    const hasContent = rows.length > 0;
+    return `
+      <h2>執行與營運層的痛點 <span class="en">Troubles & Disturbances</span></h2>
+      <div class="subline">依貴司提及之問題點，對應鼎新可協助達成之目標</div>
+      <div class="pain-table">
+        <div class="row header">
+          <div>問題類型</div>
+          <div>狀況描述</div>
+          <div>期望目標</div>
+        </div>
+        ${hasContent ? rows.map(r => `
+          <div class="row body ${r.typeClass}">
+            <div class="col-type">
+              <div class="type-icon">${r.type === '障礙' ? '🚧' : r.type === '困擾' ? '⚙️' : '⚠️'}</div>
+              <div>${escHtml(r.type)}</div>
+              <div class="type-en">(${escHtml(r.typeEn)})</div>
             </div>
-          `;
-        }).join('')}
+            <div class="col-desc"><span class="u">因為</span>${escHtml(r.description)}，<span class="u">所以</span>影響營運效率與決策時效。</div>
+            <div class="col-expect">
+              <div class="goal">【${escHtml(r.goal.goal)}】</div>
+              <div>${escHtml(r.goal.desc)}</div>
+            </div>
+          </div>
+        `).join('') : `
+          <div class="row body">
+            <div class="col-type"><div class="type-icon">💡</div><div>待補</div></div>
+            <div class="col-desc" style="color:var(--muted);">尚未蒐集到具體痛點描述，請回到主頁補充「客戶困擾/痛點」欄位。</div>
+            <div class="col-expect" style="color:var(--muted);">補齊後系統將自動對應期望目標。</div>
+          </div>
+        `}
       </div>
     `;
   }
@@ -908,20 +1308,20 @@
   function renderValueSlide(d) {
     const recs = computeRecommendations(d).slice(0, 6);
     return `
-      <div class="section-tag">鼎新價值交付</div>
-      <h2>對應貴司需求的產品組合</h2>
+      <h2>鼎新價值交付 <span class="en">Value Delivery</span></h2>
+      <div class="subline">對應貴司需求之產品組合，含實際客戶案例</div>
       <div class="value-grid">
         ${recs.map(r => {
           const v = PRODUCT_VALUE[r.name] || { value: r.reasons[0] || '', cases: [] };
-          const caseText = v.cases && v.cases.length
-            ? `<div class="product-case"><strong>案例：${escHtml(v.cases[0].client)}</strong><br>${escHtml(v.cases[0].outcome)}</div>`
-            : '';
+          const cs = v.cases && v.cases.length ? v.cases[0] : null;
           return `
             <div class="value-card tier-${r.tier}">
-              <div class="product-tier">${r.tier === 'main' ? '主推' : '建議'}</div>
-              <div class="product-name">${escHtml(r.name)}</div>
-              <div class="product-value">${escHtml(v.value)}</div>
-              ${caseText}
+              <div class="card-head">
+                <div class="prod-tag">${r.tier === 'main' ? '主推' : '建議'}</div>
+                <div class="prod-name">${escHtml(r.name)}</div>
+              </div>
+              <div class="prod-value">${escHtml(v.value)}</div>
+              ${cs ? `<div class="prod-case"><strong>${escHtml(cs.client)}</strong>：${escHtml(cs.outcome)}</div>` : ''}
             </div>
           `;
         }).join('')}
@@ -931,12 +1331,13 @@
 
   function renderProcessSlide(d) {
     return `
-      <div class="section-tag">評估與價值交付流程</div>
-      <h2>從需求到上線 — 顧問陪跑</h2>
+      <h2>評估與交付流程 <span class="en">Assessment & Delivery Process</span></h2>
+      <div class="subline">從需求到上線 — 顧問陪跑五階段</div>
       <div class="process-flow">
         ${PROCESS_STEPS.map(s => `
           <div class="process-step">
             <div class="step-num">${escHtml(s.num)}</div>
+            <div class="step-en">${escHtml(s.en)}</div>
             <h4>${escHtml(s.title)}</h4>
             <p>${escHtml(s.desc)}</p>
           </div>
@@ -945,15 +1346,30 @@
     `;
   }
 
+  function renderClosingSlide(d) {
+    const industry = getIndustryKey(d);
+    const industryTxt = industry !== '通用' ? escHtml(d.name) : '貴司';
+    return `
+      <h1>告別<span class="highlight">資訊破碎</span>，<br>以<span class="highlight">數據驅動</span>${industryTxt}未來。</h1>
+      <div class="closing-sub">
+        從日常營運到經營決策，建立標準化、一體化的數位營運體系。
+      </div>
+      <div class="thanks"><strong>Thank You</strong>&nbsp;|&nbsp; 鼎新電腦顧問團隊</div>
+    `;
+  }
+
   // ══════════════════════════════════════════
-  //  Slides 陣列 — 之後要加新投影片就 push 一個項目
+  //  Slides 陣列
   // ══════════════════════════════════════════
   const SLIDES = [
-    { id: 'cover',   className: 'cover-slide',   render: renderCoverSlide },
-    { id: 'intro',   className: 'intro-slide',   render: renderIntroSlide },
-    { id: 'issues',  className: 'issues-slide',  render: renderIssuesSlide },
-    { id: 'value',   className: 'value-slide',   render: renderValueSlide },
-    { id: 'process', className: 'process-slide', render: renderProcessSlide },
+    { id: 'cover',    className: 'cover-slide',                   render: renderCoverSlide,  dark: false, hideCorner: true },
+    { id: 'biz',      className: 'content-slide biz-slide',       render: renderBizSlide,    dark: false },
+    { id: 'cases',    className: 'content-slide cases-slide',     render: renderCasesSlide,  dark: false },
+    { id: 'divider',  className: 'divider-slide',                 render: renderDividerSlide, dark: true, hideCorner: true },
+    { id: 'pain',     className: 'content-slide softbg pain-slide',    render: renderPainSlide,   dark: false },
+    { id: 'value',    className: 'content-slide softbg value-slide',   render: renderValueSlide,  dark: false },
+    { id: 'process',  className: 'content-slide process-slide',   render: renderProcessSlide, dark: false },
+    { id: 'closing',  className: 'closing-slide',                 render: renderClosingSlide, dark: true, hideCorner: true },
   ];
 
   // ══════════════════════════════════════════
@@ -987,9 +1403,10 @@
   function renderSlides() {
     const stage = document.getElementById('stage');
     stage.innerHTML = SLIDES.map((s, i) => `
-      <div class="slide ${s.className}${i === 0 ? ' active' : ''}" data-index="${i}">
+      <div class="slide ${s.className}${i === 0 ? ' active' : ''}" data-index="${i}" data-dark="${s.dark ? '1' : '0'}">
         ${s.render(clientData)}
-        <div class="slide-num">${i + 1} / ${SLIDES.length}</div>
+        ${!s.hideCorner ? `<div class="brand-mark${s.dark ? ' on-dark' : ''}">鼎新 DINGHSIN</div>` : ''}
+        <div class="slide-num${s.dark ? ' on-dark' : ''}">${String(i + 1).padStart(2, '0')} / ${String(SLIDES.length).padStart(2, '0')}</div>
       </div>
     `).join('');
     renderDots();
