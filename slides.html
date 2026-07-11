@@ -4,6 +4,13 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>初訪簡報 — 鼎新</title>
+
+  <!-- Firebase SDK -->
+  <script src="https://www.gstatic.com/firebasejs/10.12.4/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.4/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.4/firebase-firestore-compat.js"></script>
+  <script src="firebase-config.js"></script>
+
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -1378,7 +1385,7 @@
   let currentIndex = 0;
   let clientData = null;
 
-  function init() {
+  function actuallyInit() {
     const params = new URLSearchParams(window.location.search);
     const id = params.get('id');
     if (!id) return renderEmpty('缺少客戶 ID');
@@ -1386,6 +1393,22 @@
     if (!clientData) return renderEmpty('找不到客戶資料。請回主頁重新選取。');
     renderSlides();
     document.addEventListener('keydown', onKey);
+  }
+
+  function init() {
+    // 若 Firebase 已設定，等 auth + snapshot 之後再渲染
+    if (typeof initCloud === 'function') {
+      initCloud((user, info) => {
+        if (!info.configured) { actuallyInit(); return; }
+        if (!user) {
+          renderEmpty('請先回主頁登入 Google 帳號後再開啟簡報');
+          return;
+        }
+        if (info.isFirstSync) actuallyInit();
+      });
+    } else {
+      actuallyInit();
+    }
   }
 
   function renderEmpty(msg) {

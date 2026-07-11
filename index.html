@@ -4,6 +4,13 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>鼎新ERP — 客戶需求蒐集平台</title>
+
+  <!-- Firebase SDK -->
+  <script src="https://www.gstatic.com/firebasejs/10.12.4/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.4/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.4/firebase-firestore-compat.js"></script>
+  <script src="firebase-config.js"></script>
+
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -606,6 +613,142 @@
     }
     .confirm-section-header:first-child { border-top: none; }
 
+    /* Auth overlay */
+    .auth-overlay {
+      position: fixed;
+      inset: 0;
+      background: linear-gradient(135deg, #003366 0%, #0066cc 100%);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 9998;
+      padding: 20px;
+    }
+    .auth-overlay.visible { display: flex; }
+    .auth-card {
+      background: white;
+      border-radius: 16px;
+      padding: 40px 32px;
+      max-width: 420px;
+      width: 100%;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+      text-align: center;
+    }
+    .auth-card .auth-logo {
+      font-size: 32px;
+      font-weight: 900;
+      color: #003366;
+      letter-spacing: 3px;
+      margin-bottom: 8px;
+    }
+    .auth-card h2 {
+      font-size: 20px;
+      color: #2d3748;
+      margin-bottom: 8px;
+      font-weight: 700;
+    }
+    .auth-card p {
+      color: #718096;
+      font-size: 14px;
+      line-height: 1.6;
+      margin-bottom: 24px;
+    }
+    .auth-card .signin-btn {
+      background: white;
+      color: #2d3748;
+      border: 2px solid #cbd5e0;
+      border-radius: 8px;
+      padding: 12px 24px;
+      font-size: 15px;
+      font-weight: 700;
+      font-family: inherit;
+      cursor: pointer;
+      width: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      transition: all 0.2s;
+    }
+    .auth-card .signin-btn:hover { border-color: #0066cc; background: #f7fafc; }
+    .auth-card .signin-btn svg { width: 20px; height: 20px; }
+    .auth-card .auth-note {
+      margin-top: 20px;
+      font-size: 12px;
+      color: #a0aec0;
+      line-height: 1.6;
+    }
+    .auth-card .auth-warn {
+      background: #fefcbf;
+      border: 1.5px solid #f6e05e;
+      border-radius: 8px;
+      padding: 12px;
+      font-size: 12px;
+      color: #744210;
+      margin-bottom: 20px;
+      line-height: 1.6;
+      text-align: left;
+    }
+
+    /* User menu in header */
+    .user-menu {
+      display: none;
+      align-items: center;
+      gap: 10px;
+      color: white;
+      font-size: 13px;
+    }
+    .user-menu.visible { display: flex; }
+    .user-menu .user-avatar {
+      width: 30px;
+      height: 30px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.2);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      overflow: hidden;
+    }
+    .user-menu .user-avatar img { width: 100%; height: 100%; object-fit: cover; }
+    .user-menu .user-name { font-weight: 600; max-width: 120px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .sync-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      font-size: 11px;
+      padding: 3px 8px;
+      background: rgba(255,255,255,0.15);
+      border-radius: 10px;
+      font-weight: 600;
+    }
+    .sync-badge::before {
+      content: '';
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: #48bb78;
+      animation: pulse 2s infinite;
+    }
+    @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.4; } }
+
+    /* Migration prompt */
+    .migrate-prompt {
+      background: #ebf4ff;
+      border: 1.5px solid #90cdf4;
+      border-radius: 10px;
+      padding: 14px 18px;
+      margin-bottom: 16px;
+      display: none;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+    .migrate-prompt.visible { display: flex; }
+    .migrate-prompt .m-text { font-size: 13px; color: #2b6cb0; flex: 1; min-width: 220px; }
+    .migrate-prompt .m-actions { display: flex; gap: 6px; }
+
     /* Print */
     .print-footer { display: none; }
     @page {
@@ -698,12 +841,38 @@
 </head>
 <body>
 
+<!-- 登入畫面 -->
+<div class="auth-overlay" id="auth-overlay">
+  <div class="auth-card">
+    <div class="auth-logo">鼎新</div>
+    <h2>ERP 客戶需求蒐集平台</h2>
+    <p>登入以在手機、電腦間同步你的客戶資料</p>
+    <div class="auth-warn" id="auth-warn" style="display:none;">
+      ⚠️ 尚未設定 Firebase 專案 config。目前僅本地儲存（不會跨裝置同步）。<br>
+      請把 Firebase Console 拿到的 config 貼到 <code>firebase-config.js</code>。
+    </div>
+    <button class="signin-btn" onclick="handleSignIn()">
+      <svg viewBox="0 0 24 24"><path fill="#4285f4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34a853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#fbbc05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/><path fill="#ea4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg>
+      使用 Google 帳號登入
+    </button>
+    <div class="auth-note">
+      你的資料只存在你自己的 Google 帳號下，其他人看不到。
+    </div>
+  </div>
+</div>
+
 <div class="header">
   <div class="header-left">
     <div class="header-logo">鼎新</div>
     <div class="header-title">ERP 系統評估 — 客戶需求蒐集平台</div>
   </div>
   <div class="header-nav">
+    <div class="user-menu" id="user-menu">
+      <div class="sync-badge">同步中</div>
+      <div class="user-avatar" id="user-avatar"></div>
+      <div class="user-name" id="user-name"></div>
+      <button class="nav-btn" onclick="handleSignOut()" style="padding:4px 10px;font-size:11px;">登出</button>
+    </div>
     <button class="nav-btn" onclick="goList()">📋 客戶列表</button>
   </div>
 </div>
@@ -712,6 +881,15 @@
 
   <!-- ══════════════ LIST PAGE ══════════════ -->
   <div id="list-page">
+    <div class="migrate-prompt" id="migrate-prompt">
+      <div class="m-text">
+        📦 偵測到本機有 <strong id="migrate-count">0</strong> 筆客戶資料尚未上雲。要上傳到雲端讓其他裝置也能看到嗎？
+      </div>
+      <div class="m-actions">
+        <button class="btn-mini" onclick="handleMigrate()">上傳到雲端</button>
+        <button class="btn-danger" onclick="dismissMigrate()">先不要</button>
+      </div>
+    </div>
     <div class="card">
       <div class="card-header" style="display:flex;justify-content:space-between;align-items:center;">
         <span>📋 客戶清單</span>
@@ -1172,10 +1350,85 @@
   //  Init
   // ══════════════════════════════════════════
   document.addEventListener('DOMContentLoaded', () => {
-    goList();
-    // Set default visit date
+    initCloud(onCloudAuthChange);
     setDefaultDates();
   });
+
+  // ══════════════════════════════════════════
+  //  Cloud auth handling
+  // ══════════════════════════════════════════
+  function onCloudAuthChange(user, info) {
+    const overlay = document.getElementById('auth-overlay');
+    const menu = document.getElementById('user-menu');
+    const warn = document.getElementById('auth-warn');
+
+    if (!info.configured) {
+      // 尚未貼 config → 允許使用但只有本地儲存
+      overlay.classList.remove('visible');
+      menu.classList.remove('visible');
+      if (warn) warn.style.display = 'block';
+      goList();
+      return;
+    }
+
+    if (!user) {
+      overlay.classList.add('visible');
+      menu.classList.remove('visible');
+      if (warn) warn.style.display = 'none';
+      return;
+    }
+
+    // 已登入
+    overlay.classList.remove('visible');
+    menu.classList.add('visible');
+    const avatar = document.getElementById('user-avatar');
+    const nameEl = document.getElementById('user-name');
+    if (user.photoURL) avatar.innerHTML = `<img src="${user.photoURL}" alt="">`;
+    else avatar.textContent = (user.displayName || 'U').charAt(0).toUpperCase();
+    nameEl.textContent = user.displayName || user.email || '使用者';
+
+    // 首次雲端同步完成後
+    if (info.isFirstSync) {
+      // 檢查本機是否有舊資料要遷移
+      const localCount = hasLocalDataToMigrate();
+      if (localCount > 0) {
+        document.getElementById('migrate-count').textContent = localCount;
+        document.getElementById('migrate-prompt').classList.add('visible');
+      }
+      goList();
+    } else {
+      // 後續 snapshot：若正在列表頁就更新
+      if (document.getElementById('list-page').style.display !== 'none') renderList();
+    }
+  }
+
+  function handleSignIn() {
+    signInWithGoogle().catch(err => {
+      console.error(err);
+      showToast('登入失敗：' + (err.message || err.code), 'error');
+    });
+  }
+
+  function handleSignOut() {
+    if (!confirm('確定要登出？（雲端資料仍會保留）')) return;
+    signOutFromCloud().then(() => {
+      showToast('已登出', 'success');
+    });
+  }
+
+  async function handleMigrate() {
+    const result = await migrateLocalToCloud();
+    document.getElementById('migrate-prompt').classList.remove('visible');
+    if (result.migrated > 0) {
+      showToast(`已上傳 ${result.migrated} 筆客戶到雲端`, 'success');
+    } else if (result.error) {
+      showToast('上傳失敗：' + result.error, 'error');
+    }
+  }
+
+  function dismissMigrate() {
+    document.getElementById('migrate-prompt').classList.remove('visible');
+  }
 
   function setDefaultDates() {
     const today = new Date().toISOString().slice(0, 10);
