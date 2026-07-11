@@ -1403,9 +1403,16 @@
   }
 
   function handleSignIn() {
+    showToast('登入中...', 'success');
     signInWithGoogle().catch(err => {
-      console.error(err);
-      showToast('登入失敗：' + (err.message || err.code), 'error');
+      console.error('[SignIn]', err);
+      let msg = '登入失敗';
+      if (err.code === 'auth/unauthorized-domain') msg = '此網域未授權，請聯絡管理員（' + window.location.hostname + '）';
+      else if (err.code === 'auth/operation-not-allowed') msg = 'Google 登入未啟用，請至 Firebase Console 檢查';
+      else if (err.code === 'auth/network-request-failed') msg = '網路連線失敗，請檢查網路';
+      else if (err.message) msg = '登入失敗：' + err.message;
+      else if (err.code) msg = '登入失敗：' + err.code;
+      showToast(msg, 'error');
     });
   }
 

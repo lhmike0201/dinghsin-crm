@@ -119,14 +119,21 @@ function initCloud(onAuthChange) {
 
 function signInWithGoogle() {
   const provider = new firebase.auth.GoogleAuthProvider();
+  provider.setCustomParameters({ prompt: 'select_account' });
   const auth = firebase.auth();
-  // 先嘗試 popup（桌機比較快）
+  // 手機／Safari 直接走 redirect flow（popup 一定被擋）
+  const isMobile = /Android|iPhone|iPad|iPod|Mobile/i.test(navigator.userAgent);
+  const isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
+  if (isMobile || isSafari) {
+    return auth.signInWithRedirect(provider);
+  }
+  // 桌機先嘗試 popup，被擋就 fallback redirect
   return auth.signInWithPopup(provider).catch(err => {
-    // Popup 被擋 or 手機不支援 → 改用 redirect flow
     if (err.code === 'auth/popup-blocked' ||
         err.code === 'auth/popup-closed-by-user' ||
         err.code === 'auth/cancelled-popup-request' ||
-        err.code === 'auth/operation-not-supported-in-this-environment') {
+        err.code === 'auth/operation-not-supported-in-this-environment' ||
+        err.code === 'auth/web-storage-unsupported') {
       return auth.signInWithRedirect(provider);
     }
     throw err;
