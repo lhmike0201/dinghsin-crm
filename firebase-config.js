@@ -88,6 +88,10 @@ function initCloud(onAuthChange) {
     firebase.initializeApp(firebaseConfig);
     __cloudDb = firebase.firestore();
     __cloudDb.enablePersistence({ synchronizeTabs: true }).catch(() => {});
+    // 處理 redirect 登入回來的結果
+    firebase.auth().getRedirectResult().catch(err => {
+      if (err.code) console.warn('[Firebase] redirect result error:', err.code, err.message);
+    });
     firebase.auth().onAuthStateChanged(user => {
       __cloudUser = user;
       if (__unsubscribe) { __unsubscribe(); __unsubscribe = null; }
@@ -115,7 +119,18 @@ function initCloud(onAuthChange) {
 
 function signInWithGoogle() {
   const provider = new firebase.auth.GoogleAuthProvider();
-  return firebase.auth().signInWithPopup(provider);
+  const auth = firebase.auth();
+  // 先嘗試 popup（桌機比較快）
+  return auth.signInWithPopup(provider).catch(err => {
+    // Popup 被擋 or 手機不支援 → 改用 redirect flow
+    if (err.code === 'auth/popup-blocked' ||
+        err.code === 'auth/popup-closed-by-user' ||
+        err.code === 'auth/cancelled-popup-request' ||
+        err.code === 'auth/operation-not-supported-in-this-environment') {
+      return auth.signInWithRedirect(provider);
+    }
+    throw err;
+  });
 }
 
 function signOutFromCloud() {
